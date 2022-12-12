@@ -1,0 +1,241 @@
+database
+
+1. users
+	- id
+	- username
+	- password
+	- fullname
+	- email
+	- isEnabled
+	- roles (roles n:n)
+	
+2. profile_user : 
+	- id
+	- fullname
+	- address
+	- phone
+	- dateOfBirth
+	- gender
+	- user_id (users 1:1)
+	
+3. registration_token 
+	- id
+	- token
+	- expiredTime
+	- user_id (users 1:1)
+
+4. roles
+	- id
+	- role_name
+	
+5. books: 
+	- id
+	- bookTitle
+	- description
+	- imgLink
+	- price
+	- entryPrice
+	- publishingYear
+	- amount
+	- author_id (authors n:n)
+	- category_id (categories 1:n)
+	
+6. category: 
+	- id
+	- categoryTitle
+	
+7. author: 
+	- id
+	- fullName
+	- dateOfBirth
+	- description
+		
+8. Orders: x
+	- id
+	- address
+	- status
+	- dateTime
+	- customer_id (users n:1)
+
+9. orderDetails: x
+	- id
+	- amount
+	- price
+	- book_id (books n:1)
+	- order_id (order n:1)
+
+10. discount x
+	- id
+	- maxDiscountAmount
+	- discountRate
+	- discountAmount
+	- user_id (users n:n)
+
+
+
+
+///////////////////     TRANG MANAGEMENT AUTHOR
+
+ <th:block th:each="i : ${authors}">
+                  <tr>
+                    <td>[[${i.id}]]</td>
+                    <td>
+                      <a href="#"
+                        ><img
+                          style="width: 20px"
+                          src="https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg"
+                          class="avatar"
+                          alt="Avatar"
+                        />
+                        [[i.fullname]]</a
+                      >
+                    </td>
+                    <td>[[${i.dateOfBirth}]]</td>
+                    <td>[[${i.description}]]</td>
+                    <td>
+                      <a
+                        href="#"
+                        class="settings"
+                        title="Settings"
+                        data-toggle="tooltip"
+                        ><i class="material-icons">&#xE8B8;</i></a
+                      >
+                      <a
+                        href="#"
+                        class="delete"
+                        title="Delete"
+                        data-toggle="tooltip"
+                        ><i class="material-icons">&#xE5C9;</i></a
+                      >
+                    </td>
+                  </tr>
+                </th:block>  
+
+
+
+///////////////////     TRANG MANAGEMENT CATEGORY
+ 			<th:block th:each="c : ${categories}"> 
+				<tr>
+                    <td>[[${c.id}]]</td>
+                    <td>
+                      <a href="#"
+                        ><img
+                          style="width: 20px"
+                          src="https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg"
+                          class="avatar"
+                          alt="Avatar"
+                        />
+                        [[${c.categoryTitle}]]</a
+                      >
+                    </td>
+
+                    <td>
+                      <a
+                        href="#"
+                        class="settings"
+                        title="Settings"
+                        data-toggle="tooltip"
+                        ><i class="material-icons">&#xE8B8;</i></a
+                      >
+                      <a
+                        href="#"
+                        class="delete"
+                        title="Delete"
+                        data-toggle="tooltip"
+                        ><i class="material-icons">&#xE5C9;</i></a
+                      >
+                    </td>
+                  </tr>
+				</th:block>
+
+///////////////////     TRANG MANAGEMENT BOOK
+
+<tr>
+                  <td>1</td>
+                  <td>
+                    <a href="#"
+                      ><img
+                        style="width: 20px"
+                        src="https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg"
+                        class="avatar"
+                        alt="Avatar"
+                      />
+                      Michael Holz</a
+                    >
+                  </td>
+                  <td>Đây là description</td>
+                  <td>Link img</td>
+                  <td>50</td>
+                  <td>
+                    <span>50.000d</span>
+                  </td>
+                  <td>
+                    <a
+                      href="#"
+                      class="settings"
+                      title="Settings"
+                      data-toggle="tooltip"
+                      ><i class="material-icons">&#xE8B8;</i></a
+                    >
+                    <a
+                      href="#"
+                      class="delete"
+                      title="Delete"
+                      data-toggle="tooltip"
+                      ><i class="material-icons">&#xE5C9;</i></a
+                    >
+                  </td>
+                </tr>
+
+
+///////////////////     TRANG MANAGEMENT USER
+
+
+<th:block th:each="user : ${users}">
+                  <tr>
+                    <td>[[${user.id}]]</td>
+                    <td>[[${user.username}]]</td>
+                    <td>
+                      <a href="#"
+                        ><img
+                          style="width: 20px"
+                          src="https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg"
+                          class="avatar"
+                          alt="Avatar"
+                        />
+                        [[${user.fullName}]]</a
+                      >
+                    </td>
+                    <td>[[${user.email}]]</td>
+                    <td>[[${user.role}]]</td>
+                    <td>
+                      <div th:if="${user.enabled}">
+                        <span class="status text-success">&bull;</span> Active
+                      </div>
+                      <div th:unless="${user.enabled}">
+                        <span class="status text-danger">&bull;</span> Suspended
+                      </div>
+                    </td>
+                    <td>
+                      <a
+                        href="#"
+                        class="settings"
+                        title="Settings"
+                        data-toggle="tooltip"
+                        ><i class="material-icons">&#xE8B8;</i></a
+                      >
+                      <a
+                        href="#"
+                        class="delete"
+                        title="Delete"
+                        data-toggle="tooltip"
+                        ><i class="material-icons">&#xE5C9;</i></a
+                      >
+                    </td>
+                  </tr>
+                </th:block>
+
+
+
+
+

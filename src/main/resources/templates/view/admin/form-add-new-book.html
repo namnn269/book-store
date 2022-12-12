@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/admin/_layout_admin"
+>
+  <body>
+    <div layout:fragment="content">
+      <!-- /#page-content-wrapper -->
+
+      <div class="container">
+        <hr />
+        <div class="bg-light">
+          <article class="card-body mx-auto" style="max-width: 800px">
+            <h4 class="card-title mt-3 text-center">Create New Book</h4>
+
+            <form
+              th:action="@{/admin/add-new-book}"
+              method="post"
+              th:object="${book}"
+            >
+              <th:block th:if="*{id}">
+                <input type="hidden" th:field="*{id}" />
+              </th:block>
+              th:onsubmit="return checkFormNewBook()"
+              <!-- book title -->
+              <h5>Tên sách</h5>
+             
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-user"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{bookTitle}"
+                  class="form-control"
+                  placeholder="Tên sách"
+                  type="text"
+                  required="required"
+                />
+              </div> 
+
+              <!-- category -->
+              <h5>Thể loại</h5>
+              <div class="form-group input-group">
+                <select id="selUser2" th:field="*{category_id}">
+                  <option value="0">-- Chọn thể loại --</option>
+                  <option
+                    th:each="i : ${categories}"
+                    th:value="${i.id}"
+                    th:text="${i.categoryTitle}"
+                  ></option>
+                </select>
+              </div>
+
+              <!-- authors -->
+              <h5>Tác giả</h5>
+              <div>
+                <select
+                  th:field="*{authors_id}"
+                  multiple
+                  id="authorSelection"
+                  style="width: 100%"
+                >
+                  <option
+                    th:each="i : ${authors}"
+                    th:value="${i.id}"
+                    th:text="${i.fullname}"
+                  ></option>
+                </select>
+              </div>
+              <!-- description -->
+              <h5>Mô tả ngắn</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-user"></i>
+                  </span>
+                </div>
+                <textarea
+                  th:field="*{description}"
+                  class="form-control"
+                  placeholder="Mô tả ngắn"
+                  required="required"
+                ></textarea>
+              </div>
+              <!-- img Link -->
+              <h5>Link ảnh</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-lock"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{imgLink}"
+                  class="form-control"
+                  id="imgLink"
+                  placeholder="Link ảnh"
+                  type="text"
+                  required="required"
+                />
+              </div>
+              <!-- price -->
+              <h5>Giá bán</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-lock"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{price}"
+                  class="form-control"
+                  placeholder="Giá bán"
+                  type="number"
+                  min="0"
+                  required="required"
+                />
+              </div>
+              <!-- entryPrice -->
+              <h5>Giá nhập</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-envelope"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{entryPrice}"
+                  class="form-control"
+                  placeholder="Giá nhập"
+                  type="number"
+                  min="0"
+                  required="required"
+                />
+              </div>
+              <!-- publishingYear -->
+              <h5>Năm xuất bản</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-envelope"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{publishingYear}"
+                  class="form-control"
+                  placeholder="Publishing Year"
+                  type="number"
+                  min="0"
+                  required="required"
+                />
+              </div>
+              <!-- amount In Stock -->
+              <h5>Số lượng hiện có</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-envelope"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{amountInStock}"
+                  class="form-control"
+                  placeholder="Số lượng hiện có"
+                  type="number"
+                  min="0"
+                  required="required"
+                />
+              </div>
+
+              <!-- error mesage -->
+              <div
+                th:if="${errorMsg}"
+                th:class="alert-danger"
+                th:text="${errorMsg.content}"
+              ></div>
+              <div th:class="alert-danger" id="passwordError"></div>
+              <!-- submit button -->
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">
+                  Create New Book
+                </button>
+              </div>
+              <!-- form-group// -->
+            </form>
+          </article>
+        </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+    </div>
+    <th:block layout:fragment="script">
+      <style>
+        .select2 {
+          width: 100% !important;
+        }
+      </style>
+
+      <script>
+        // chọn thể loại
+        $(document).ready(function () {
+          $("#selUser2").select2();
+        });
+
+        // check box
+        jQuery("#authorSelection").multiselect({
+          columns: 1,
+          placeholder: "Chọn tác giả",
+          search: true,
+        });
+
+        $(".nav-sidebar").removeClass("active");
+        $(".book-nav-sidebar").addClass("active");
+      </script>
+    </th:block>
+  </body>
+</html>

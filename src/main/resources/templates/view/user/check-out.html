@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/user/_layout_user"
+>
+  <body>
+    <div layout:fragment="content">
+      <div class="container">
+        <!-- BEGIN SIDEBAR & CONTENT -->
+        <div class="row margin-bottom-40">
+          <!-- BEGIN CONTENT -->
+          <div class="col-md-12 col-sm-12">
+            <h1>THANH TOÁN</h1>
+            <div class="goods-page">
+              <div class="goods-data clearfix">
+                <div class="table-wrapper-responsive">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-md-6 order-md-2">
+                        <div class="">
+                          <table
+                            th:unless="${order.isEmpty}"
+                            summary="Shopping cart"
+                          >
+                            <thead>
+                              <tr>
+                                <th class="thead" style="width: 20%">
+                                  Hình ảnh
+                                </th>
+                                <th class="thead" style="width: 20%">
+                                  Tên sách
+                                </th>
+                                <th class="thead" style="width: 20%">
+                                  Số lượng
+                                </th>
+                                <th class="thead" style="width: 200%">Giá</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <th:block th:each="book: ${order}">
+                                <tr>
+                                  <td class="goods-page-image">
+                                    <a
+                                      th:href="@{'/trang-chu/book-detail/'+${book.id}}"
+                                      ><img
+                                        th:src="@{${book.imgLink}}"
+                                        alt="${book.bookTitle}"
+                                    /></a>
+                                  </td>
+                                  <td
+                                    class="goods-page-ref-no"
+                                    style="font-size: 20px"
+                                  >
+                                    [[${book.bookTitle}]]
+                                  </td>
+                                  <td
+                                    class="goods-page-ref-no"
+                                    style="font-size: 20px"
+                                  >
+                                    [[${book.amountInCart}]]
+                                  </td>
+                                  <td class="goods-page-price">
+                                    <strong
+                                      ><span>$</span>[[${book.price}]]</strong
+                                    >
+                                  </td>
+                                </tr>
+                              </th:block>
+                            </tbody>
+                          </table>
+                          <ul class="shopping-total" style="float: none">
+                            <li
+                              th:unless="${order.isEmpty}"
+                              class="shopping-total-price"
+                            >
+                              <em>Total</em>
+                              <strong class="price"
+                                ><span>$</span>[[${totalMoney}]]</strong
+                              >
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="col-md-6 order-md-1">
+                        <form class="needs-validation" th:object="${profile}">
+                          <div class="row">
+                            <div class="col-md-12 mb-3">
+                              <label for="lastName">Full name</label>
+                              <input
+                                class="form-control"
+                                th:value="*{fullName}"
+                                disabled="disabled"
+                                style="background-color: white"
+                              />
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label for="username">Username</label>
+                            <div class="input-group">
+                              <input
+                                class="form-control"
+                                th:value="*{username}"
+                                disabled="disabled"
+                                style="background-color: white"
+                              />
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label for="email">Email </label>
+                            <input
+                              class="form-control"
+                              th:value="*{email}"
+                              disabled="disabled"
+                              style="background-color: white"
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label for="phone">Phone </label>
+                            <input
+                              class="form-control"
+                              th:value="*{phoneNumber}"
+                              disabled="disabled"
+                              style="background-color: white"
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label for="address">Address</label>
+                            <input
+                              class="form-control"
+                              th:value="*{address}"
+                              disabled="disabled"
+                              style="background-color: white"
+                            />
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <div th:if="${order.isEmpty}" class="alert alert-warning">
+                    Giỏ hàng đang trống
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a th:unless="${order.isEmpty}" th:href="@{/cart/complete-payment}">
+              <button
+                style="position: absolute; right: 0; left: 0"
+                class="btn btn-primary"
+                type="submit"
+              >
+                Đặt hàng
+              </button>
+            </a>
+            <!-- END CONTENT -->
+          </div>
+          <!-- END SIDEBAR & CONTENT -->
+        </div>
+      </div>
+    </div>
+    <th:block layout:fragment="script">
+      <style>
+        .icon {
+          font-size: 14px;
+          margin-left: 10px;
+        }
+        th {
+          text-align: center;
+        }
+        td {
+          text-align: center;
+        }
+        .thead {
+          font-size: 12px !important;
+        }
+        tbody tr td {
+          font-size: 14px !important;
+        }
+        tbody tr td img {
+          width: 40px !important;
+        }
+      </style>
+      <script type="text/javascript">
+        $(document).ready(
+          $(".btn-down").click(function () {
+            callChangeAjax(false, $(this).val());
+          }),
+          $(".btn-up").click(function () {
+            callChangeAjax(true, $(this).val());
+          }),
+          $(".delete").click(function () {
+            callDeleteAjax($(this).val());
+            $(this).parents("tr").hide();
+          })
+        );
+
+        function callDeleteAjax(id) {
+          $.ajax({
+            type: "post",
+            data: { id: id },
+            url: "/cart/delete-order-detail-incart",
+            success: function () {
+              console.log("delete ", id);
+            },
+          });
+        }
+
+        function callChangeAjax(increase, id) {
+          $.ajax({
+            type: "post",
+            data: { increase: increase, id: id },
+            url: "/cart/change-amount-in-cart",
+            success: function () {
+              console.log("change ", id);
+            },
+          });
+        }
+      </script>
+    </th:block>
+  </body>
+  <!-- END BODY -->
+</html>

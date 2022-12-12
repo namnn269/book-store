@@ -1,0 +1,153 @@
+<!-- <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Form Đăng Ký</title>
+    <link
+      href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      rel="stylesheet"
+      id="bootstrap-css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.0.8/css/all.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/signup.css}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <hr />
+      <div class="bg-light">
+        <article class="card-body mx-auto" style="max-width: 800px">
+          <h4 class="card-title mt-3 text-center">Create Account</h4>
+
+          <form
+            th:action="@{/register/save}"
+            th:object="${user}"
+            method="post"
+            th:onsubmit="return checkFormSignUp()"
+          >
+            <!-- full name -->
+            <h5>Họ và tên</h5>
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <i class="fa fa-user"></i>
+                </span>
+              </div>
+              <input
+                th:field="*{fullName}"
+                class="form-control"
+                placeholder="Full name"
+                type="text"
+                required="required"
+              />
+            </div>
+
+            <!-- user name -->
+            <h5>Username</h5>
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <i class="fa fa-user"></i>
+                </span>
+              </div>
+              <input
+                th:field="*{username}"
+                class="form-control"
+                placeholder="Username"
+                type="text"
+                required="required"
+              />
+            </div>
+
+            <!-- password -->
+            <h5>Nhập mật khẩu</h5>
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <i class="fa fa-lock"></i>
+                </span>
+              </div>
+              <input
+                th:field="*{password}"
+                class="form-control"
+                id="password"
+                placeholder="Create password"
+                type="password"
+                required="required"
+              />
+            </div>
+            <!-- repeat password -->
+            <h5>Nhập lại mật khẩu</h5>
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <i class="fa fa-lock"></i>
+                </span>
+              </div>
+              <input
+                th:field="*{rePassword}"
+                class="form-control"
+                id="repassword"
+                placeholder="Repeat password"
+                type="password"
+                required="required"
+              />
+            </div>
+            <!-- email -->
+            <h5>Nhập email</h5>
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <i class="fa fa-envelope"></i>
+                </span>
+              </div>
+              <input
+                name=""
+                th:field="*{email}"
+                class="form-control"
+                placeholder="Email address"
+                type="email"
+                required="required"
+              />
+            </div>
+            <div
+              th:if="${errorMsg}"
+              th:class="alert-danger"
+              th:text="${errorMsg.content}"
+            ></div>
+            <div th:class="alert-danger" id="passwordError"></div>
+            <!-- submit button -->
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-block">
+                Create Account
+              </button>
+            </div>
+            <!-- form-group// -->
+            <p class="text-center">
+              Have an account? <a th:href="@{/login}">Log In</a>
+            </p>
+          </form>
+        </article>
+      </div>
+    </div>
+    <br />
+    <br />
+    <script>
+      $(document).ready($("#password").keyup(() => checkFormSignUp()));
+      $(document).ready($("#repassword").keyup(() => checkFormSignUp()));
+      function checkFormSignUp() {
+        if (password.value !== repassword.value) {
+          passwordError.innerHTML = "Mật khẩu không trùng khớp";
+          return false;
+        }
+        passwordError.innerHTML = "";
+        return true;
+      }
+    </script>
+  </body>
+</html>

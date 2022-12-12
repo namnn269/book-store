@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/admin/_layout_admin"
+>
+  <body>
+    <div layout:fragment="content">
+      <!-- /#page-content-wrapper -->
+      <div class="container-xl">
+        <div class="table-responsive mt-0">
+          <div class="table-wrapper">
+            <div class="table-title">
+              <div class="row">
+                <div class="col-sm-5">
+                  <h2>Book <b>Management</b></h2>
+                </div>
+                <div class="col-sm-7">
+                  <a th:href="@{/admin/new-book}" class="btn btn-secondary"
+                    ><i class="material-icons">&#xE147;</i>
+                    <span>Add New Book</span></a
+                  >
+                  <a th:href="@{?#}" class="btn btn-secondary"
+                    ><i class="material-icons">&#xE24D;</i>
+                    <span>Export to Excel</span></a
+                  >
+                </div>
+              </div>
+            </div>
+            	<div th:if="${message}" class="alert alert-success">[[${message}]]</div>
+            	<div th:if="${error}" class="alert alert-danger">[[${error}]]</div>
+            <table class="table table-striped table-hover" id="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Author</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- row start -->
+
+                <!-- row end -->
+              </tbody>
+            </table>
+            <div class="clearfix">
+              <div class="hint-text">
+                Tổng
+                <b>[[${totalElements}]]</b> Sản phẩm
+              </div>
+              <ul class="pagination">
+                <li class="previous-page-item">
+                  <a href="#" class="page-link">Previous</a>
+                </li>
+                <th:block th:each="i : ${#numbers.sequence(1,totalPages)}">
+                  <li class="page-item">
+                    <a href="#" class="page-link">[[${i}]]</a>
+                  </li>
+                </th:block>
+                <li class="next-page-item">
+                  <a href="#" class="page-link">Next</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- /#page-content-wrapper -->
+    <th:block layout:fragment="script">
+      <script
+        type="text/javascript"
+        th:src="@{/js/management-book.js}"
+      ></script>
+      <script>
+      // lần vào trang đầu tiên tải trang 1
+      // Lấy phần tử '.page-item' đầu tiên gán class 'active'
+      let pageSizeDefalut = 6;
+      $(document).ready(function () {
+        callAjax(0, pageSizeDefalut, "id");
+        $(".pagination").find(".page-item").first().addClass("active");
+      });
+
+      // lấy vị trí nút bấm và gán 'avtive' => gọi AJAX
+      $("body").on("click", ".page-item", function () {
+        $(".page-item").removeClass("active");
+        $(this).addClass("active");
+        let pageNo = Number.parseInt($(this).text() - 1);
+        console.log(pageNo);
+        callAjax(pageNo, pageSizeDefalut, "id");
+      });
+
+      // lấy vị trí nút kế tiếp và gán active. nút trước bỏ
+      $(document).ready(function () {
+        $(".next-page-item").click(function () {
+          $(".pagination")
+            .find(".page-item.active")
+            .next()
+            .addClass("active");
+
+          $(".pagination")
+            .find(".page-item.active")
+            .prev()
+            .removeClass("active");
+
+          let currentPage =
+            Number.parseInt(
+              $(".pagination").find(".page-item.active").text()
+            ) - 1;
+          callAjax(currentPage, pageSizeDefalut, "id");
+        });
+
+        // lấy vị trí nút trước và gán 'active' nút sau bỏ
+        $(".previous-page-item").click(function () {
+          $(".pagination")
+            .find(".page-item.active")
+            .prev()
+            .addClass("active");
+
+          $(".pagination")
+            .find(".page-item.active")
+            .next()
+            .removeClass("active");
+
+          let currentPage =
+            Number.parseInt(
+              $(".pagination").find(".page-item.active").text()
+            ) - 1;
+
+          callAjax(currentPage, pageSizeDefalut, "id");
+        });
+      });
+      // hàm gọi AJAX - get author
+      function callAjax(pageNo, pageSize, sortBy) {
+        $.ajax({
+          url: "/admin/management-book-ajax",
+          data: { pageNo: pageNo, pageSize: pageSize, sortBy: sortBy },
+          success: (value) => {
+            let tbody = $("#table").find("tbody");
+            tbody.empty();
+            tbody.append(value);
+          },
+        });
+      }
+      </script>
+    </th:block>
+  </body>
+</html>

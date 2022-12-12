@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/user/_layout_user"
+>
+  <body>
+    <div layout:fragment="content">
+      <div class="container">
+        <ul class="breadcrumb">
+          <li>
+            <div>Thể loại</div>
+          </li>
+        </ul>
+        <p th:if="${message}" class="alert alert-success">[[${message}]]</p>
+        <p th:if="${error}" class="alert alert-danger">[[${error}]]</p>
+        <!-- BEGIN SIDEBAR & CONTENT -->
+        <div class="row margin-bottom-40">
+          <!-- BEGIN SIDEBAR -->
+          <div class="sidebar col-md-3 col-sm-5">
+            <ul class="list-group margin-bottom-25 sidebar-menu">
+              <li class="list-group-item clearfix">
+                <a href="/trang-chu" class="category">
+                  <i class="bi bi-tags"></i> TẤT CẢ
+                </a>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="1">
+                  <i class="bi bi-tags"></i> TRINH THÁM
+                </button>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="2">
+                  <i class="bi bi-tags"></i> HÀNH ĐỘNG
+                </button>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="3">
+                  <i class="bi bi-tags"></i> PHIÊU LƯU
+                </button>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="4">
+                  <i class="bi bi-tags"></i> TRUYỆN TRANH
+                </button>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="5">
+                  <i class="bi bi-tags"></i> TIỂU THUYẾT
+                </button>
+              </li>
+            </ul>
+            <div class="sidebar-products clearfix">
+              <h2>Bestsellers</h2>
+              <div class="item">
+                <a href="shop-item.html"
+                  ><img
+                    th:src="@{/img/k1.jpg}"
+                    alt="Some Shoes in Animal with Cut Out"
+                /></a>
+                <h3>
+                  <a href="shop-item.html">Some Shoes in Animal with Cut Out</a>
+                </h3>
+                <div class="price">$31.00</div>
+              </div>
+            </div>
+          </div>
+          <!-- END SIDEBAR -->
+          <!-- BEGIN CONTENT -->
+          <div class="col-md-9 col-sm-7 main-content">
+            <div th:if="${error_book_not_found}" class="alert alert-danger">
+              [[${error_book_not_found}]]
+            </div>
+            <div th:unless="${error_book_not_found}" class="product-page">
+              <div class="row" id="product-list">
+                <div class="col-md-6 col-sm-6">
+                  <div class="product-main-image">
+                    <img
+                      th:src="${book.imgLink}"
+                      alt="Cool green dress with red bell"
+                      class="img-responsive"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                  <h1>[[${book.bookTitle}]]</h1>
+                  <div class="price-availability-block clearfix">
+                    <div class="price">
+                      <strong><span>$</span>[[${book.price}]]</strong>
+                      <!-- <em>$<span>62.00</span></em> -->
+                    </div>
+                    <div class="availability">
+                      Availability: <strong>In Stock</strong>
+                    </div>
+                  </div>
+                  <div class="description">
+                    <h5>Mô tả:</h5>
+                    <p>[[${book.description}]]</p>
+                  </div>
+                  <br />
+                  <h5>Tác giả:</h5>
+                  <div th:each="i : ${book.authorAndDescription}">
+                    <div><i class="bi bi-person-check"></i> [[${i}]]</div>
+                  </div>
+                  <br />
+                  <form th:action="@{/cart/add-to-cart}" method="post">
+                    <input type="hidden" name="id" th:value="${book.id}" />
+                    <div class="product-page-cart">
+                      <div class="product-quantity">
+                        <input type="hidden" name="from" value="book-detail" />
+                        <input
+                          id="product-quantity"
+                          type="number"
+                          value="1"
+                          min="1"
+                          class="form-control input-sm"
+                          name="quantity"
+                          style="width: 80px"
+                        />
+                      </div>
+                      <button class="btn btn-primary" type="submit">
+                        Add to cart
+                      </button>
+                    </div>
+                  </form>
+
+                  <ul class="social-icons"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END CONTENT -->
+        </div>
+        <!-- END SIDEBAR & CONTENT -->
+      </div>
+    </div>
+    <th:block layout:fragment="script">
+      <script type="text/javascript" th:src="@{/js/book-detail.js}"></script>
+    </th:block>
+  </body>
+  <!-- END BODY -->
+</html>

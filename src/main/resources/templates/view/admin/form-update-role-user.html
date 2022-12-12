@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/admin/_layout_admin"
+>
+  <body>
+    <div layout:fragment="content">
+      <!-- /#page-content-wrapper -->
+
+      <div class="container">
+        <hr />
+        <div class="bg-light">
+          <article class="card-body mx-auto" style="max-width: 800px">
+            <h4 class="card-title mt-3 text-center">
+              Update Account in Admin System
+            </h4>
+
+            <form
+              th:action="@{/admin/update-user}"
+              th:object="${user}"
+              method="post"
+            >
+              th:onsubmit="return checkFormSignUp()"
+              <input type="hidden" th:field="*{id}" />
+              <!-- user name -->
+              <h5>Username</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-user"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{username}"
+                  class="form-control"
+                  placeholder="${user.username}"
+                  type="text"
+                  disabled
+                />
+              </div>
+              <!-- fullname name -->
+              <h5>Full name</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-user"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{fullName}"
+                  class="form-control"
+                  placeholder="${user.fullName}"
+                  type="text"
+                  disabled
+                />
+              </div>
+              <!-- enabled -->
+              <h5>Kích hoạt</h5>
+              <div class="form-group input-group">
+                <select id="selUser2" th:field="*{enabled}">
+                  <option th:value="true" th:text="Enabled"></option>
+                  <option th:value="false" th:text="Disable"></option>
+                </select>
+              </div>
+
+              <!-- roles -->
+              <h5>Quyền</h5>
+              <div>
+                <select
+                  th:field="*{role_id}"
+                  multiple
+                  id="roleSelection"
+                  style="width: 100%"
+                >
+                  <option
+                    th:each="i : ${roles}"
+                    th:value="${i.id}"
+                    th:text="${i.roleName}"
+                  ></option>
+                </select>
+              </div>
+
+              <div
+                th:if="${errorMsg}"
+                th:class="alert-danger"
+                th:text="${errorMsg.content}"
+              ></div>
+              <div th:class="alert-danger" id="passwordError"></div>
+              <!-- submit button -->
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">
+                  Update Account
+                </button>
+              </div>
+              <!-- form-group// -->
+              <p class="text-center">
+                Have an account? <a th:href="@{/login}">Log In</a>
+              </p>
+            </form>
+          </article>
+        </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+    </div>
+    <th:block layout:fragment="script">
+      <style>
+        .select2 {
+          width: 100% !important;
+        }
+      </style>
+      <script>
+        // check box
+        jQuery("#roleSelection").multiselect({
+          columns: 1,
+          placeholder: "Chọn quyyền",
+          search: true,
+        });
+        // chọn enabled
+        $(document).ready(function () {
+          $("#selUser2").select2();
+
+          $(".nav-sidebar").removeClass("active");
+          $(".user-nav-sidebar").addClass("active");
+        });
+      </script>
+    </th:block>
+  </body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/admin/_layout_admin"
+>
+  <body>
+    <div layout:fragment="content">
+      <!-- /#page-content-wrapper -->
+      <div class="container-xl">
+        <div class="table-responsive mt-0">
+          <div class="table-wrapper">
+            <div class="table-title">
+              <div class="row">
+                <div class="col-sm-5">
+                  <h2>Order <b>Management: Đã được xác nhận </b></h2>
+                </div>
+              </div>
+            </div>
+            <!-- tr start -->
+            <br />
+            <!-- header -->
+            <div id="alert-confirm"></div>
+            <div class="row lead fw-bold">
+              <div class="col-md-1">STT</div>
+              <div class="col-md-7">
+                <div class="row">
+                  <div class="col-md-3 goods-page-image">Hình ảnh</div>
+                  <div class="col-md-3">Tên sách</div>
+                  <div class="col-md-2">Số lượng</div>
+                  <div class="col-md-3">Giá</div>
+                </div>
+              </div>
+              <div class="col-md-2">Người mua</div>
+              <div class="col-md-2">Ngày tháng</div>
+            </div>
+            <div th:if="${confirmedOrders.isEmpty}" class="alert alert-warning">
+              Danh sách trống
+            </div>
+            <th:block th:each="order,itr: ${confirmedOrders}">
+              <div class="row lead row-order">
+                <hr class="mt-2 mb-3" />
+                <div class="col-md-1">[[${itr.index+1}]]</div>
+                <div class="col-md-7">
+                  <th:block th:each=" book : ${order.bookDtos}">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <a th:href="@{'/trang-chu/book-detail/'+${book.id}}"
+                          ><img
+                            style="width: 40px"
+                            th:src="@{${book.imgLink}}"
+                            alt="${book.bookTitle}"
+                        /></a>
+                      </div>
+                      <div class="col-md-3">[[${book.bookTitle}]]</div>
+                      <div class="col-md-2">[[${book.quantity}]]</div>
+                      <div class="col-md-3">
+                        <strong><span>$</span>[[${book.price}]]</strong>
+                      </div>
+                    </div>
+                  </th:block>
+                </div>
+                <div class="col-md-2">[[${order.buyer.fullName}]]</div>
+                <div class="col-md-2">[[${order.bookDtos[0].date}]]</div>
+              </div>
+            </th:block>
+            <!-- end -->
+
+            <!-- tr end -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+    <th:block layout:fragment="script">
+      <!-- <script
+        type="text/javascript"
+        th:src="@{/js/management-order.js}"
+      ></script> -->
+      <style>
+        .comfirn-btn {
+          background-color: white;
+          border: none;
+        }
+        .comfirn-btn i {
+          font-size: 24px;
+        }
+      </style>
+
+      <script>
+        $(document).ready(function () {
+        	  $(".nav-sidebar").removeClass("active");
+              $(".confirmed-order-nav-sidebar").addClass("active");
+        	
+          $(".comfirn-btn").click(function () {
+            if (confirm("Xác nhận đơn hàng")) {
+              $(this).parents(".row-order").hide();
+              callConfirmOrderAjax(Number.parseInt($(this).val()));
+            }
+          });
+        });
+
+        function callConfirmOrderAjax(orderId) {
+          $.ajax({
+            type: "post",
+            url: "/admin/management-order-ajax",
+            data: { orderId: orderId },
+            success: (value) => {
+              $("#alert-confirm").empty();
+              $("#alert-confirm").append(value);
+              console.log(value);
+            },
+          });
+        }
+      </script>
+    </th:block>
+  </body>
+</html>

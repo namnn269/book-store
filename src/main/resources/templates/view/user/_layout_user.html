@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  lang="en"
+>
+  <head>
+    <meta charset="utf-8" />
+    <title>BOOK STORE</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap"
+      rel="stylesheet"
+    />
+     	<link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+
+    <link th:href="@{/css/bootstrap/bootstrap.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/style/style.css}" rel="stylesheet" />
+    <link
+      th:href="@{/css/style/style-shop.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <style>
+      .icon {
+        font-size: 14px;
+        margin-left: 10px;
+      }
+      .category {
+        border: none;
+        background-color: white;
+      }
+    </style>
+           
+  </head>
+  <!-- Head END -->
+
+  <!-- Body BEGIN -->
+  <body class="ecommerce">
+    <!-- BEGIN TOP BAR -->
+    <div class="pre-header">
+      <div class="container">
+        <div class="row">
+          <!-- BEGIN TOP BAR LEFT PART -->
+          <div class="col-md-4 col-sm-4 additional-shop-info">
+            <h5 th:if="${username}">Welcome [[${username}]]</h5>
+          </div>
+          <!-- END TOP BAR LEFT PART -->
+          <!-- BEGIN TOP BAR MENU -->
+          <div class="col-md-8 col-sm-8 additional-nav">
+            <ul class="list-unstyled list-inline pull-right">
+              <li th:if="${username}">
+                <a th:href="@{/account/my-account}">My Account</a>
+              </li>
+              <li th:unless="${username}">
+                <a href="/register/form">Sign up</a>
+              </li>
+              <li th:unless="${username}"><a href="/login">Log In</a></li>
+              <li th:if="${username}">
+                <form th:action="@{/logout}" class="d-flex" method="post">
+                  <input type="hidden" name="action" value="logout" />
+                  <button type="submit" class="btn">Logout</button>
+                </form>
+              </li>
+              <li><a th:href="@{/admin/management-user}">Admin</a></li>
+            </ul>
+          </div>
+          <!-- END TOP BAR MENU -->
+        </div>
+      </div>
+    </div>
+    <!-- END TOP BAR -->
+
+    <!-- BEGIN HEADER -->
+    <div class="header">
+      <div class="container">
+        <a class="site-logo" th:href="@{/trang-chu}"
+          ><img
+            style="width: 150px"
+            th:src="@{/img/logo-shop-red.png}"
+            alt="Book Store"
+        /></a>
+
+        <!-- BEGIN CART -->
+
+        <div th:if="${username}" class="top-cart-block">
+          <div class="top-cart-info" style="padding: 14px 14px 4px 14px">
+            <a th:href="@{/cart/shopping-cart}">
+              <th:block>
+                <p class="top-cart-info-count">My cart</p>
+                <i class="bi bi-cart3 icon"></i>
+              </th:block>
+            </a>
+          </div>
+          <div class="top-cart-content-wrapper">
+            <div class="top-cart-content">
+              <ul class="scroller" style="height: 250px"></ul>
+              <div class="text-right">
+                <a th:href="@{/cart/shopping-cart}" class="btn btn-default"
+                  >View Cart</a
+                >
+                <a href="shop-checkout.html" class="btn btn-primary"
+                  >Checkout</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--END CART -->
+      </div>
+    </div>
+    <!-- Header END -->
+
+    <div class="title-wrapper">
+      <div class="container">
+        <div class="container-inner">
+          <h1><span>BOOK</span> STORE</h1>
+          <em>Tri thức mọi nơi</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div layout:fragment="content"></div>
+    </div>
+
+    <!-- BEGIN STEPS -->
+    <!-- BEGIN PRE-FOOTER -->
+    <div class="pre-footer">
+      <div class="container">
+        <div class="row">
+          <!-- BEGIN BOTTOM ABOUT BLOCK -->
+          <div class="col-md-4 col-sm-6 pre-footer-col">
+            <h2>About us</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+              sit nonummy nibh euismod tincidunt ut laoreet dolore magna
+              aliquarm erat sit volutpat. Nostrud exerci tation ullamcorper
+              suscipit lobortis nisl aliquip commodo consequat.
+            </p>
+            <p>
+              Duis autem vel eum iriure dolor vulputate velit esse molestie at
+              dolore.
+            </p>
+          </div>
+          <!-- END BOTTOM ABOUT BLOCK -->
+          <!-- BEGIN BOTTOM INFO BLOCK -->
+          <div class="col-md-4 col-sm-6 pre-footer-col">
+            <h2>Information</h2>
+            <ul class="list-unstyled">
+              <li>
+                <i class="bi bi-caret-right"></i>
+                <a href="javascript:;">Customer Service</a>
+              </li>
+              <li>
+                <i class="bi bi-caret-right"></i>
+                <a href="javascript:;">Order Tracking</a>
+              </li>
+              <li>
+                <i class="bi bi-caret-right"></i>
+                <a href="javascript:;">Shipping & Returns</a>
+              </li>
+              <li>
+                <i class="bi bi-caret-right"></i>
+                <a href="contacts.html">Contact Us</a>
+              </li>
+              <li>
+                <i class="bi bi-caret-right"></i>
+                <a href="javascript:;">Careers</a>
+              </li>
+              <li>
+                <i class="bi bi-caret-right"></i>
+                <a href="javascript:;">Payment Methods</a>
+              </li>
+            </ul>
+          </div>
+          <!-- END INFO BLOCK -->
+
+          <!-- BEGIN BOTTOM CONTACTS -->
+          <div class="col-md-4 col-sm-6 pre-footer-col">
+            <h2>Our Contacts</h2>
+            <address class="margin-bottom-40">
+              35, Lorem Lis Street, Park Ave<br />
+              California, US<br />
+              Phone: 300 323 3456<br />
+              Fax: 300 323 1456<br />
+              Email: <a href="mailto:info@metronic.com">info@metronic.com</a
+              ><br />
+              Skype: <a href="skype:metronic">metronic</a>
+            </address>
+          </div>
+          <!-- END BOTTOM CONTACTS -->
+        </div>
+        <hr />
+        <footer class="bg-dark text-center text-lg-start">
+          <!-- Copyright -->
+          <div
+            class="text-center p-3"
+            style="background-color: rgba(0, 0, 0, 0.2)"
+          >
+            © 2020 Copyright:
+            <a class="text-light" href="https://mdbootstrap.com/"
+              >MDBootstrap.com</a
+            >
+          </div>
+          <!-- Copyright -->
+        </footer>
+      </div>
+    </div>
+    <!-- END PRE-FOOTER -->
+
+    <!-- BEGIN fast view of a product -->
+    <div id="product-pop-up" style="display: none; width: 700px">
+      <div class="product-page product-pop-up">
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-3">
+            <div class="product-main-image">
+              <img
+                th:src="@{/img/model7.jpg}"
+                alt="Cool green dress with red bell"
+                class="img-responsive"
+              />
+            </div>
+            <div class="product-other-images">
+              <a href="javascript:;"
+                ><img alt="Berry Lace Dress" th:src="@{/img/model4.jpg}"
+              /></a>
+              <a href="javascript:;"
+                ><img alt="Berry Lace Dress" th:src="@{/img/model4.jpg}"
+              /></a>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-9">
+            <h1>Cool green dress with red bell</h1>
+            <div class="price-availability-block clearfix">
+              <div class="price">
+                <strong><span>$</span>47.00</strong>
+                <em>$<span>62.00</span></em>
+              </div>
+              <div class="availability">
+                Availability: <strong>In Stock</strong>
+              </div>
+            </div>
+            <div class="description">
+              <p>
+                Lorem ipsum dolor ut sit ame dolore adipiscing elit, sed nonumy
+                nibh sed euismod laoreet dolore magna aliquarm erat volutpat
+                Nostrud duis molestie at dolore.
+              </p>
+            </div>
+            <div class="product-page-options">
+              <div class="pull-left">
+                <label class="control-label">Size:</label>
+                <select class="form-control input-sm">
+                  <option>L</option>
+                  <option>M</option>
+                  <option>XL</option>
+                </select>
+              </div>
+              <div class="pull-left">
+                <label class="control-label">Color:</label>
+                <select class="form-control input-sm">
+                  <option>Red</option>
+                  <option>Blue</option>
+                  <option>Black</option>
+                </select>
+              </div>
+            </div>
+            <div class="product-page-cart">
+              <div class="product-quantity">
+                <input
+                  id="product-quantity"
+                  type="text"
+                  value="1"
+                  readonly
+                  name="product-quantity"
+                  class="form-control input-sm"
+                />
+              </div>
+              <button class="btn btn-primary" type="submit">Add to cart</button>
+              <a href="shop-item.html" class="btn btn-default">More details</a>
+            </div>
+          </div>
+
+          <div class="sticker sticker-sale"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"
+    ></script>
+    
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+    <script type="text/javascript"></script>
+    <th:block layout:fragment="script"></th:block>
+    <script type="text/javascript" th:src="@{/js/layout.js}"></script>
+  </body>
+  <!-- END BODY -->
+</html>

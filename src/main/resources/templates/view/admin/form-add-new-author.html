@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/admin/_layout_admin"
+>
+  <body>
+    <div layout:fragment="content">
+      <!-- /#page-content-wrapper -->
+
+      <div class="container">
+        <hr />
+        <div class="bg-light">
+          <article class="card-body mx-auto" style="max-width: 800px">
+            <h4 class="card-title mt-3 text-center">Create New Author</h4>
+
+            <form
+              th:action="@{/admin/save-author}"
+              method="post"
+              th:object="${author}"
+            >
+              th:onsubmit="return checkFormNewBook()"
+              <th:block th:if="*{id}!=null">
+                <input type="hidden" th:field="*{id}" />
+              </th:block>
+              <!-- author fullname -->
+              <h5>Tên tác giả</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-user"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{fullname}"
+                  class="form-control"
+                  placeholder="Tên tác giả"
+                  type="text"
+                  required="required"
+                />
+              </div>
+              <!-- author birthday -->
+              <h5>Ngày sinh</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-user"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{dateOfBirth}"
+                  class="form-control"
+                  placeholder="Ngày sinh"
+                  type="date"
+                />
+              </div>
+              <!-- author description -->
+              <h5>Mô tả</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-user"></i>
+                  </span>
+                </div>
+                <textarea
+                  th:field="*{description}"
+                  class="form-control"
+                  placeholder="Mô tả ngắn"
+                  required="required"
+                ></textarea>
+              </div>
+
+              <!-- error mesage -->
+              <div
+                th:if="${errorMsg}"
+                th:class="alert-danger"
+                th:text="${errorMsg.content}"
+              ></div>
+              <div th:class="alert-danger" id="passwordError"></div>
+              <!-- submit button -->
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">
+                  Create New Author
+                </button>
+              </div>
+              <!-- form-group// -->
+            </form>
+          </article>
+        </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+    </div>
+    <th:block layout:fragment="script">
+      <script type="text/javascript">
+        $(document).ready(function () {
+          $(".nav-sidebar").removeClass("active");
+          $(".author-nav-sidebar").addClass("active");
+        });
+      </script>
+    </th:block>
+  </body>
+</html>

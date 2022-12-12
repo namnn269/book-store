@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/user/_layout_user"
+>
+  <body>
+    <div layout:fragment="content">
+      <div class="container">
+        <ul class="breadcrumb">
+          <li>
+            <div>Thể loại</div>
+          </li>
+        </ul>
+        <p th:if="${message}" class="alert alert-success">[[${message}]]</p>
+        <p th:if="${error}" class="alert alert-danger">[[${error}]]</p>
+        <!-- BEGIN SIDEBAR & CONTENT -->
+        <div class="row margin-bottom-40">
+          <!-- BEGIN SIDEBAR -->
+          <div class="sidebar col-md-3 col-sm-5">
+            <ul class="list-group margin-bottom-25 sidebar-menu">
+              <li class="list-group-item clearfix">
+                <a href="/trang-chu" class="category">
+                  <i class="bi bi-tags"></i> TẤT CẢ
+                </a>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="1">
+                  <i class="bi bi-tags"></i> TRINH THÁM
+                </button>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="2">
+                  <i class="bi bi-tags"></i> HÀNH ĐỘNG
+                </button>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="3">
+                  <i class="bi bi-tags"></i> PHIÊU LƯU
+                </button>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="4">
+                  <i class="bi bi-tags"></i> TRUYỆN TRANH
+                </button>
+              </li>
+              <li class="list-group-item clearfix">
+                <button class="category" value="5">
+                  <i class="bi bi-tags"></i> TIỂU THUYẾT
+                </button>
+              </li>
+            </ul>
+            <div class="sidebar-products clearfix">
+              <h2>Bestsellers</h2>
+              <div class="item">
+                <a href="shop-item.html"
+                  ><img
+                    th:src="@{/img/k1.jpg}"
+                    alt="Some Shoes in Animal with Cut Out"
+                /></a>
+                <h3>
+                  <a href="shop-item.html">Some Shoes in Animal with Cut Out</a>
+                </h3>
+                <div class="price">$31.00</div>
+              </div>
+            </div>
+          </div>
+          <!-- END SIDEBAR -->
+          <!-- BEGIN CONTENT -->
+          <div class="col-md-9 col-sm-7 main-content">
+            <div class="row list-view-sorting clearfix">
+              <div class="col-md-5 col-sm-5">
+                <!-- <form action="" method="get"> -->
+                <div class="input-group">
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    class="form-control"
+                    id="search-input"
+                  />
+                  <span class="input-group-btn">
+                    <button
+                      class="btn btn-danger"
+                      id="cancel-search-btn"
+                      type="submit"
+                      style="width: 40px"
+                    >
+                      X
+                    </button>
+                    <button
+                      class="btn btn-primary"
+                      id="search-btn"
+                      type="submit"
+                    >
+                      Search
+                    </button>
+                  </span>
+                </div>
+                <!-- </form> -->
+              </div>
+              <div class="col-md-7 col-sm-7">
+                <div class="pull-right">
+                  <div class="dropdown">
+                    <label for="sort-by">Sort by</label>
+                    <select name="" id="sort-by">
+                      <option value="id">Random</option>
+                      <option value="price-up">Giá tăng</option>
+                      <option value="price-down">Giá giảm</option>
+                      <option value="category">Thể loại</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- BEGIN PRODUCT LIST -->
+            <div class="row product-list" id="product-list"></div>
+
+            <!-- END PRODUCT LIST -->
+            <!-- BEGIN PAGINATOR -->
+            <div class="row">
+              <div class="clearfix col-md-8 col-sm-8" id="pagination-id">
+                <ul class="pagination">
+                  <li class="previous-page-item">
+                    <a href="#" class="page-link">Previous</a>
+                  </li>
+                  <th:block th:each="i : ${#numbers.sequence(1,totalPages)}">
+                    <li class="page-item">
+                      <a href="#" class="page-link">[[${i}]]</a>
+                    </li>
+                  </th:block>
+                  <li class="next-page-item">
+                    <a href="#" class="page-link">Next</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- END PAGINATOR -->
+          </div>
+          <!-- END CONTENT -->
+        </div>
+        <!-- END SIDEBAR & CONTENT -->
+      </div>
+    </div>
+    <th:block layout:fragment="script">
+      <script type="text/javascript" th:src="@{/js/home.js}"></script>
+    </th:block>
+  </body>
+  <!-- END BODY -->
+</html>

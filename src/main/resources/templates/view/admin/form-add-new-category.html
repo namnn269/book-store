@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/admin/_layout_admin"
+>
+  <body>
+    <div layout:fragment="content">
+      <!-- /#page-content-wrapper -->
+
+      <div class="container">
+        <hr />
+        <div class="bg-light">
+          <article class="card-body mx-auto" style="max-width: 800px">
+            <h4 class="card-title mt-3 text-center">Create New Category</h4>
+
+            <form
+              th:action="@{/admin/save-category}"
+              method="post"
+              th:object="${category}"
+            >
+              <th:block th:if="*{id}">
+                <input type="hidden" th:field="*{id}" />
+              </th:block>
+              th:onsubmit="return checkFormNewBook()"
+              <!-- book title -->
+              <h5>Tên thể loại</h5>
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-user"></i>
+                  </span>
+                </div>
+                <input
+                  th:field="*{categoryTitle}"
+                  class="form-control"
+                  placeholder="Tên thể loại"
+                  type="text"
+                  required="required"
+                />
+              </div>
+
+              <!-- error mesage -->
+              <div
+                th:if="${errorMsg}"
+                th:class="alert-danger"
+                th:text="${errorMsg.content}"
+              ></div>
+              <div th:class="alert-danger" id="passwordError"></div>
+              <!-- submit button -->
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">
+                  Create New Category
+                </button>
+              </div>
+              <!-- form-group// -->
+            </form>
+          </article>
+        </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+    </div>
+    <th:block layout:fragment="script">
+      <!-- <script
+        type="text/javascript"
+        th:src="@{/js/management-category.js}"
+      ></script> -->
+      <script>
+        $(".nav-sidebar").removeClass("active");
+        $(".category-nav-sidebar").addClass("active");
+      </script>
+    </th:block>
+  </body>
+</html>

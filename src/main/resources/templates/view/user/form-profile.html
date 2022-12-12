@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="/view/user/_layout_user"
+>
+  <body>
+    <div layout:fragment="content">
+      <div class="container align-middle">
+        <p th:if="${message}" class="alert alert-success">[[${message}]]</p>
+        <p th:if="${error}" class="alert alert-danger">[[${error}]]</p>
+        <!-- BEGIN SIDEBAR & CONTENT -->
+        <div class="row margin-bottom-40 container">
+          <!-- BEGIN CONTENT -->
+          <div class="col-md-12 main-content">
+            <div class="row list-view-sorting clearfix">
+              <h1>CẬP NHẬT THÔNG TIN</h1>
+              <form
+                th:action="@{/account/update-info}"
+                th:object="${profile}"
+                method="post"
+                th:onsubmit="return checkFormSignUp()"
+              >
+                <input type="hidden" th:field="*{id}" />
+
+                <!-- address -->
+                <h5>Địa chỉ:</h5>
+                <div class="form-group input-group">
+                  <input
+                    th:field="*{address}"
+                    class="form-control"
+                    placeholder="Địa chỉ"
+                    type="text"
+                    required="required"
+                  />
+                </div>
+
+                <!-- phone nubmer -->
+                <h5>Số điện thoại</h5>
+                <div class="form-group input-group">
+                  <input
+                    th:field="*{phoneNumber}"
+                    class="form-control"
+                    placeholder="Số điện thoại"
+                    type="text"
+                    required="required"
+                  />
+                </div>
+
+                <!-- Ngày sinh -->
+                <h5>Ngày sinh</h5>
+                <div class="form-group input-group">
+                  <input
+                    th:field="*{dateOfBirth}"
+                    class="form-control"
+                    placeholder="Ngày sinh"
+                    type="date"
+                    required="required"
+                  />
+                </div>
+                <!-- gender -->
+                <h5>Giới tính</h5>
+                <div class="form-group input-group">
+                  <select th:field="*{gender}" id="">
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                </div>
+                <div
+                  th:if="${errorMsg}"
+                  th:class="alert-danger"
+                  th:text="${errorMsg.content}"
+                ></div>
+                <div th:class="alert-danger" id="passwordError"></div>
+                <!-- submit button -->
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Update
+                  </button>
+                </div>
+                <!-- form-group// -->
+              </form>
+            </div>
+          </div>
+          <!-- BEGIN PRODUCT LIST -->
+          <div class="row product-list" id="product-list"></div>
+
+          <!-- END PRODUCT LIST -->
+        </div>
+        <!-- END CONTENT -->
+      </div>
+      <!-- END SIDEBAR & CONTENT -->
+    </div>
+    <th:block layout:fragment="script">
+      <script type="text/javascript"></script>
+      <script type="text/javascript" th:src="@{/js/myaccount.js}"></script>
+    </th:block>
+  </body>
+  <!-- END BODY -->
+</html>
