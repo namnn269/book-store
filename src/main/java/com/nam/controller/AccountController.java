@@ -24,6 +24,7 @@ import com.nam.service.IProfileService;
 public class AccountController {
 	// test git 88
 	// test git 100
+
 	@Autowired
 	IProfileService profileService;
 	@Autowired
