@@ -22,7 +22,7 @@ import com.nam.service.IProfileService;
 @Controller
 @RequestMapping(value = "/account")
 public class AccountController {
-	// test git 77
+	// test git 88
 	@Autowired
 	IProfileService profileService;
 	@Autowired
