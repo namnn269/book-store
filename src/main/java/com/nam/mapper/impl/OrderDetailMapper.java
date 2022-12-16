@@ -1,4 +1,4 @@
-package com.nam.mapper;
+package com.nam.mapper.impl;
 
 import java.sql.Date;
 import java.util.stream.Collectors;
@@ -9,10 +9,12 @@ import com.nam.dto.PurchasedOrderDetailDto;
 import com.nam.entity.Author;
 import com.nam.entity.Book;
 import com.nam.entity.OrderDetail;
+import com.nam.mapper.IOrderDetailMapper;
 
 @Component
-public class MapperOrderDetail {
+public class OrderDetailMapper implements IOrderDetailMapper{
 
+	@Override
 	public PurchasedOrderDetailDto fromOrderDetailToPurchasedBookDto(OrderDetail orderDetail) {
 		Book book = orderDetail.getBook();
 		PurchasedOrderDetailDto orderDetailDto = new PurchasedOrderDetailDto();

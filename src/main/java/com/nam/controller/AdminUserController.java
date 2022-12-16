@@ -45,11 +45,6 @@ public class AdminUserController {
 	@Autowired
 	private IRoleRepository roleRepo;
 
-	private int pageNo=0;
-	private int pageSize=6;
-	private String sortBy="id";
-	
-	
 	@GetMapping("/test")
 	public String adminTest() {
 		return "view/admin/admin-test";
@@ -59,9 +54,8 @@ public class AdminUserController {
 	@GetMapping({"/management-user",""})
 	public String userManagement(Model model, @ModelAttribute("message") String message,
 												@ModelAttribute("error") String error) {
-		Page<User> userPage = userService.getPageable(pageNo, pageSize, sortBy);
-		model.addAttribute("totalPages", userPage.getTotalPages()==0?1:userPage.getTotalPages());
-		model.addAttribute("totalElements", userPage.getTotalElements());
+		List<Role> roles= roleRepo.findAll();
+		model.addAttribute("roles", roles);
 		model.addAttribute("message",message.equals("")?null:message);
 		model.addAttribute("error", error.equals("")?null:message);
 		return "view/admin/management-user";
@@ -98,60 +92,6 @@ public class AdminUserController {
 		return mav;
 	}
 
-	// trả về call AJAX
-	@GetMapping(value = "/management-user-ajax", produces = "text/plain; charset=utf-8")
-	@ResponseBody
-	public String callAjaxUser(@RequestParam(defaultValue = "0", name = "pageNo") int pageNo,
-								@RequestParam(defaultValue = "6", name = "pageSize") int pageSize,
-								@RequestParam(defaultValue = "id", name = "sortBy") String sortBy) {
-		this.pageNo=pageNo;this.pageSize=pageSize;this.sortBy=sortBy;
-		List<UserDto> list=userService.findAll(pageNo, pageSize, sortBy);
-		int i=1;
-		String html="";
-				for (UserDto userDto : list) {
-					
-				html +=
-				" <tr>"
-				+ "                    <td>"+((pageNo*pageSize+i))+"</td>"
-				+ "                    <td>"+userDto.getUsername()+"</td>"
-				+ "                    <td>"
-				+ "                      <a href='#'"
-				+ "                        ><img"
-				+ "                          style='width: 20px'"
-				+ "                          src='https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg'"
-				+ "                          class='avatar'"
-				+ "                          alt='Avatar'"
-				+ "                        />"
-				+ "                        "+userDto.getFullName()+"</a"
-				+ "                      >"
-				+ "                    </td>"
-				+ "                    <td>"+userDto.getEmail()+"</td>"
-				+ "                    <td>"+userDto.getRole()+"</td>"
-				+ "                    <td>"
-				+ "                        <span class='status text-"+ (userDto.isEnabled()?"success":"danger") +"'>&bull;</span> "+(userDto.isEnabled()?"Active":"Suspended")+""
-				+ "                    </td>"
-				+ "                    <td>"
-				+ "                      <a"
-				+ "                        href='/admin/update-user/"+userDto.getId()+"'"
-				+ "                        class='settings'"
-				+ "                        title='Settings'"
-				+ "                        data-toggle='tooltip'"
-				+ "                        ><i class='material-icons'>&#xE8B8;</i></a"
-				+ "                      >"
-				+ "                      <a"
-				+ "                        href='/admin/delete-user/"+userDto.getId()+"'"
-				+ "                        class='delete'"
-				+ "                        title='Delete'"
-				+ "                        data-toggle='tooltip'"
-				+ "                        ><i class='material-icons'>&#xE5C9;</i></a"
-				+ "                      >"
-				+ "                    </td>"
-				+ "                  </tr>";
-							i++;
-				}
-		
-		return html;
-	}
 	
 	// lấy id user cần update -> show form update
 	@GetMapping("/update-user/{id}")
@@ -189,21 +129,98 @@ public class AdminUserController {
 	}
 	
 	// lấy id từ đường dẫn -> delete user
-	@GetMapping("/delete-user/{id}")
-	public ModelAndView deleteUser(@PathVariable("id") Long id, RedirectAttributes ra) {
-		ModelAndView mav=new ModelAndView();
+	@GetMapping(value = "/delete-user", produces = "text/plain; charset=utf-8")
+	@ResponseBody
+	public String deleteUser(@RequestParam("id") Long id, RedirectAttributes ra) {
+		Message message;
 		try {
-			Message message = userService.delete(id);
-			mav.setViewName("redirect:/admin/management-user");
-			ra.addFlashAttribute("message", message.getContent());
+			message = userService.delete(id);
 		} catch (ObjectNotFoundException o) {
-			ra.addFlashAttribute("error", new ErrorMsgDto(o.getMessage()));
-			mav.setViewName("redirect:/admin/management-user");
+			message = new Message(o.getMessage());
 		}
-		return mav;
+		return message.getContent();
 	}
 	
-	
+	// trả về call AJAX
+		@GetMapping(value = "/management-user-ajax")
+		@ResponseBody
+		public String[] callAjaxUser(	@RequestParam(defaultValue = "0", name = "pageNo") int pageNo,
+									@RequestParam(defaultValue = "6", name = "pageSize") int pageSize,
+									@RequestParam(defaultValue = "", name = "searchFor") String searchFor,
+									@RequestParam(defaultValue = "0") Long roleId,
+									@RequestParam(defaultValue = "2") int status) {
+			List<UserDto> list = userService.findAll(pageNo, pageSize, searchFor, roleId, status);
+			int i = 1;
+			String html = "";
+					for (UserDto userDto : list) {
+						
+					html +=
+					" <tr>"
+					+ "                    <td>" + ( pageNo * pageSize + i ) + "</td>"
+					+ "                    <td>"+userDto.getUsername()+"</td>"
+					+ "                    <td>"
+					+ "                      <a href='#'"
+					+ "                        ><img"
+					+ "                          style='width: 20px'"
+					+ "                          src='https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg'"
+					+ "                          class='avatar'"
+					+ "                          alt='Avatar'/>"
+					+ "                        "+userDto.getFullName()+"</a"
+					+ "                      >"
+					+ "                    </td>"
+					+ "                    <td>"+userDto.getEmail()+"</td>"
+					+ "                    <td>"+userDto.getRole()+"</td>"
+					+ "                    <td>"
+					+ "                        <span class='status text-"+ (userDto.isEnabled()?"success":"danger") +"'>&bull;</span> "+(userDto.isEnabled()?"Active":"Suspended")+""
+					+ "                    </td>"
+					+ "                    <td>"
+					+ "                      <a"
+					+ "                        href='/admin/update-user/"+userDto.getId()+"'"
+					+ "                        class='settings'"
+					+ "                        title='Settings'"
+					+ "                        data-toggle='tooltip'"
+					+ "                        ><i class='material-icons'>&#xE8B8;</i></a"
+					+ "                      >"
+					+ "                      <button"
+					+ "                       value=" + userDto.getId()
+					+ "                        class='delete'"
+					+ "                        title='Delete'"
+					+ "                        data-toggle='tooltip'"
+					+ "                        ><i class='material-icons'>&#xE5C9;</i></button>"
+					+ "                    </td>"
+					+ "                  </tr>";
+								i++;
+					}
+			String paginationHtml = getPaginationString(pageNo, pageSize, searchFor, roleId, status);
+			return new String[] {html, paginationHtml};
+		}
+		
+		private  String getPaginationString(int pageNo, int pageSize, String searchKey, Long roleId, int status) {
+			Page<User> userPage = userService.getPageable(pageNo, pageSize, searchKey, roleId, status);
+			String html =			"<div class='hint-text'>"
+					+ "                Tổng"
+					+ "                <b>"+userPage.getTotalElements()+"</b> thành viên"
+					+ "              </div>"
+					+ "              <ul class='pagination'>"
+					+ "                <li class='previous-page-item'>"
+					+ "                  <a href='#' class='page-link'>Previous</a>"
+					+ "                </li>";
+					
+			for (int i = 1; i <= userPage.getTotalPages(); i++) {
+				html += "                  <li class='page-item " + (i == pageNo + 1 ? "active":" ")+"'>"
+					+ "                    <a href='#' class='page-link'>"+i+"</a>"
+					+ "                  </li>";
+			}
+					
+					html+=
+					 "                <li class='next-page-item'>"
+					+ "                  <a href='#' class='page-link'>Next</a>"
+					+ "                </li>"
+					+ "              </ul>";
+			
+			return html;
+		}
+		
 }
 
 

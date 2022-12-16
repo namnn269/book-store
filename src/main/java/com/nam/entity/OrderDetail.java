@@ -38,4 +38,9 @@ public class OrderDetail {
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "order_id", referencedColumnName = "id")
 	private Order order;
+	
+	public void removeBook(Book book) {
+		this.book=null;
+		book.getOrderDetails().remove(this);
+	}
 }

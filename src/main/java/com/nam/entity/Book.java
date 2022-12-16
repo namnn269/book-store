@@ -52,7 +52,7 @@ public class Book {
 	
 	@Column(name = "amount_in_stock")
 	private Long amountInStock;
-	 
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "author_book",
 				joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"),
@@ -68,16 +68,28 @@ public class Book {
 	
 	public void removeAuthor(Author author) {
 		this.authors.remove(author);
-		author.getBooks().remove(this);	
 		}
 	
 	public void removeAuthorList(List<Author> authors) {
 		authors.stream().forEach(x->{this.authors.remove(x);});
 	}
 	
+	public void removeAllAuthors() {
+		this.authors=null;
+	}
+	
 	public void removeOrderDetail(OrderDetail orderDetail) {
 		this.orderDetails.remove(orderDetail);
 		orderDetail.setBook(null);
+	}
+	
+	public void removeAllOrderDetail() {
+		this.orderDetails=null;
+	}
+	
+	public void removeCategory() {
+		this.category.getBooks().remove(this);
+		this.category = null;
 	}
 	
 }

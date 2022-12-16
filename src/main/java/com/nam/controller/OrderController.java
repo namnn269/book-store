@@ -23,7 +23,7 @@ import com.nam.entity.User;
 import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.OrderFailureException;
 import com.nam.exception_mesage.OverQuantityException;
-import com.nam.mapper.MapperBook;
+import com.nam.mapper.impl.BookMapper;
 import com.nam.service.IBookService;
 import com.nam.service.IOrderService;
 import com.nam.service.IProfileService;
@@ -46,7 +46,7 @@ public class OrderController {
 	private IProfileService profileService;
 	
 	@Autowired
-	private MapperBook mapperBook;
+	private BookMapper mapperBook;
 	
 	@PostMapping(value = "/add-to-cart")
 	public ModelAndView addToCart(  @RequestParam(value = "id") Long id, 

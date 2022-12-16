@@ -29,16 +29,9 @@ public class AdminAuthorController {
 	@Autowired
 	private IAuthorService authorService;
 	
-	private int pageSize=6;
-	private String sortBy="id";
-	
 	@GetMapping("/management-author")
 	public String managementAuthor(Model model, @ModelAttribute("message") String message,
 			@ModelAttribute("error") String error) {
-		System.out.println(message);
-		Page<Author> authorPage = authorService.getPageAuthor(0, this.pageSize, this.sortBy);
-		model.addAttribute("totalPages", authorPage.getTotalPages());
-		model.addAttribute("totalElements", authorPage.getTotalElements());
 		model.addAttribute("message", message.equals("") ? null : message);
 		model.addAttribute("error", error.equals("") ? null : error);
 		return "view/admin/management-author";
@@ -64,14 +57,41 @@ public class AdminAuthorController {
 		return mav;
 	}
 
-	@GetMapping(value = "/management-author-ajax", produces = "text/plain; charset=utf-8")
+	@GetMapping("/update-author/{id}")
+	public ModelAndView showFormUpdate(@PathVariable("id") Long id) {
+		ModelAndView mav=new ModelAndView();
+		Optional<Author> author=authorService.findById(id);
+		try {
+			mav.addObject("author", author.get());
+			mav.setViewName("view/admin/form-add-new-author");
+		} catch (Exception e) {
+			mav.setViewName("redirect:/admin/management-author");
+		}
+		return mav;
+	}
+	
+	@GetMapping(value = "/delete-author", produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public String callAuthorAjax(@RequestParam(defaultValue = "0") int pageNo,
-			@RequestParam(defaultValue = "5") int pageSize,
-			@RequestParam(defaultValue = "id") String sortBy) {
-		this.pageSize=pageSize;this.sortBy=sortBy;
-		List<Author> authors = authorService.findAll(pageNo, pageSize, sortBy);
-		int i=1;
+	public String deleteAuthor(@RequestParam("id") Long id,RedirectAttributes ra) {
+		Message message;
+		try {
+			 message = authorService.delete(id);
+			ra.addFlashAttribute("message", message.getContent());
+		} catch (ObjectNotFoundException o) {
+			 message =new Message(o.getMessage());
+		}
+		return message.getContent();
+	}
+	
+
+	@GetMapping(value = "/management-author-ajax")
+	@ResponseBody
+	public String[] callAuthorAjax(	@RequestParam(defaultValue = "0") int pageNo,
+									@RequestParam(defaultValue = "6") int pageSize,
+									@RequestParam(defaultValue = "id") String sortBy,
+									@RequestParam(defaultValue = "") String searchFor) {
+		List<Author> authors = authorService.findAll(pageNo, pageSize, sortBy, searchFor);
+		int i = 1;
 		String html="";
 		for(Author author: authors) {
 			html += "<tr>"
@@ -97,50 +117,48 @@ public class AdminAuthorController {
 					+ "                        data-toggle='tooltip'"
 					+ "                        ><i class='material-icons'>&#xE8B8;</i></a"
 					+ "                      >"
-					+ "                      <a"
-					+ "                        href='/admin/delete-author/"+author.getId()+"'"
+					+ "                      <button"
+					+ "                        value="+author.getId()
 					+ "                        class='delete'"
 					+ "                        title='Delete'"
 					+ "                        data-toggle='tooltip'"
-					+ "                        ><i class='material-icons'>&#xE5C9;</i></a"
-					+ "                      >"
+					+ "                        ><i class='material-icons'>&#xE5C9;</i></button>"
 					+ "                    </td>"
 					+ "                  </tr>";
 					i++;
 			
 		}
+		String paginationHtml=getPaginationString(pageNo, pageSize, sortBy, searchFor);
+		return new String[] {html, paginationHtml};
+	}
+	
+	
+	private  String getPaginationString(int pageNo, int pageSize, String sortBy, String searchFor) {
+		Page<Author> authorPage = authorService.getPageAuthor(pageNo, pageSize, sortBy, searchFor);
+		String html =			"<div class='hint-text'>"
+				+ "                Tổng"
+				+ "                <b>"+authorPage.getTotalElements()+"</b> tác giả"
+				+ "              </div>"
+				+ "              <ul class='pagination'>"
+				+ "                <li class='previous-page-item'>"
+				+ "                  <a href='#' class='page-link'>Previous</a>"
+				+ "                </li>";
+				
+		for (int i = 1; i <= authorPage.getTotalPages(); i++) {
+			html += "                  <li class='page-item " + (i == pageNo + 1 ? "active":" ")+"'>"
+				+ "                    <a href='#' class='page-link'>"+i+"</a>"
+				+ "                  </li>";
+		}
+				
+				html+=
+				 "                <li class='next-page-item'>"
+				+ "                  <a href='#' class='page-link'>Next</a>"
+				+ "                </li>"
+				+ "              </ul>";
 		
 		return html;
 	}
 	
-	@GetMapping("/update-author/{id}")
-	public ModelAndView showFormUpdate(@PathVariable("id") Long id) {
-		ModelAndView mav=new ModelAndView();
-		Optional<Author> author=authorService.findById(id);
-		try {
-			mav.addObject("author", author.get());
-			mav.setViewName("view/admin/form-add-new-author");
-		} catch (Exception e) {
-			mav.setViewName("redirect:/admin/management-author");
-		}
-		return mav;
-	}
-	
-	@GetMapping("/delete-author/{id}")
-	public ModelAndView deleteAuthor(@PathVariable("id") Long id,RedirectAttributes ra) {
-		ModelAndView mav=new ModelAndView();
-		try {
-			Message message = authorService.delete(id);
-			mav.setViewName("redirect:/admin/management-author");
-			ra.addFlashAttribute("message", message.getContent());
-		} catch (ObjectNotFoundException o) {
-			mav.addObject("errorMsg", new ErrorMsgDto(o.getMessage()));
-			mav.setViewName("redirect:/admin/management-author");
-		}
-		return mav;
-	}
-	
-
 }
 
 

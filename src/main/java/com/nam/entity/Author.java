@@ -41,7 +41,7 @@ public class Author {
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;
 	
-	@ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(mappedBy = "authors",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<Book> books;
 	
 }

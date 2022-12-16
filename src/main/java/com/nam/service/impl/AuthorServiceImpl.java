@@ -9,9 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.nam.entity.Author;
+import com.nam.entity.Book;
 import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.ObjectNotFoundException;
 import com.nam.repository.IAuthorRepository;
@@ -45,29 +47,40 @@ public class AuthorServiceImpl implements IAuthorService {
 	}
 
 	@Override
-	public List<Author> findAll(int pageNo, int pageSize, String sortBy) {
-		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-		Page<Author> page = authorRepo.findAll(pageable);
+	public List<Author> findAll(int pageNo, int pageSize, String sortBy, String searchFor) {
+		Page<Author> page = getPageAuthor(pageNo, pageSize, sortBy, searchFor);
 		if(!page.hasContent()) return Collections.emptyList();
 		return page.getContent();
 	}
 
 	@Override
-	public Page<Author> getPageAuthor(int pageNo, int pageSize, String sortBy) {
-		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-		return authorRepo.findAll(pageable);
+	public Page<Author> getPageAuthor(int pageNo, int pageSize, String sortBy, String seachFor) {
+		int partitionIndex = sortBy.indexOf("-");
+		String sortByWord = sortBy.substring(0, partitionIndex);
+		String ascOrDesc = sortBy.substring(partitionIndex + 1);
+
+		Direction direction = Direction.ASC;
+		if (ascOrDesc.equalsIgnoreCase("asc"))
+			direction = Direction.ASC;
+		else
+			direction = Direction.DESC;
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(direction, sortByWord));
+		return authorRepo.findAllBySearchAndPageble(seachFor, pageable);
 	}
 
 	@Override
 	public Message delete(Long id) {
-		Optional<Author> opAuthor=authorRepo.findById(id);
-		if(opAuthor.isPresent()) {
-			Author delAuthor=opAuthor.get();
-			delAuthor.getBooks().stream().forEach(x->x.removeAuthor(delAuthor));
+		Optional<Author> opAuthor = authorRepo.findById(id);
+		if (opAuthor.isPresent()) {
+			Author delAuthor = opAuthor.get();
+			for (Book book : delAuthor.getBooks()) {
+				book.removeAuthor(delAuthor);
+			}
+			delAuthor.setBooks(null);
 			authorRepo.delete(delAuthor);
-			return new Message("Xóa thành công! ID: "+id);
+			return new Message("Xóa thành công! ID: " + id);
 		} else {
-			throw new ObjectNotFoundException("Không tìm thấy tác giả");
+			throw new ObjectNotFoundException("Không tìm thấy tác giả! ID: "+id);
 		}
 		
 	}

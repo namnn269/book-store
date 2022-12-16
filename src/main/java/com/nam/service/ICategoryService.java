@@ -13,11 +13,11 @@ public interface ICategoryService {
 
 	List<Category> findAll();
 
-	List<Category> findAll(int pageNo, int pageSize, String sortBy);
-
-	Page<Category> getPageCategory(int pageNo, int pageSize, String sortBy);
-
 	Message save(Category category);
 	
 	Message delete(Long id);
+
+	Page<Category> getPageCategory(int pageNo, int pageSize, String sortBy, String searchFor);
+
+	List<Category> findAll(int pageNo, int pageSize, String sortBy, String seachFor);
 }

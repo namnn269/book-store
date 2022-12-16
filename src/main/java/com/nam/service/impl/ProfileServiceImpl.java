@@ -10,7 +10,7 @@ import com.nam.entity.ProfileUser;
 import com.nam.entity.User;
 import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.ValidFormException;
-import com.nam.mapper.MapperProfile;
+import com.nam.mapper.IProfileMapper;
 import com.nam.repository.IProfileRepository;
 import com.nam.service.IProfileService;
 import com.nam.service.IUserService;
@@ -21,7 +21,7 @@ public class ProfileServiceImpl implements IProfileService {
 	@Autowired
 	IUserService userService;
 	@Autowired
-	MapperProfile mapperProfile;
+	IProfileMapper profileMapper;
 	@Autowired
 	private IProfileRepository profileRepo;
 
@@ -59,7 +59,7 @@ public class ProfileServiceImpl implements IProfileService {
 	@Override
 	public ProfileUserDto getProfileDto() {
 		User user = userService.getCurrentLoggedInUser();
-		ProfileUserDto profileUserDto = mapperProfile.fromUserToProfileDto(user);
+		ProfileUserDto profileUserDto = profileMapper.fromUserToProfileDto(user);
 		return profileUserDto;
 	}
 

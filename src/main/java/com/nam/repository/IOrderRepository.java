@@ -14,8 +14,8 @@ public interface IOrderRepository extends JpaRepository<Order, Long>{
 	
 	List<Order> findByUser(User user);
 	
-	@Query(value = "SELECT * FROM orders o WHERE o.user_id=?1 AND o.order_status=?2 ", nativeQuery = true)
-	List<Order> findByUserAndStatus(User user, int status);
+	@Query(value = "SELECT * FROM orders o WHERE o.user_id=?1 AND (o.order_status=?2 OR o.order_status=?3 )", nativeQuery = true)
+	List<Order> findByUserAndStatus(User user, int status, int status2);
 	
 	@Query(value = "SELECT * FROM orders o WHERE o.order_status=?1 ", nativeQuery = true)
 	List<Order> findByStatus(int status);

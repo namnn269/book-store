@@ -13,7 +13,12 @@
         <hr />
         <div class="bg-light">
           <article class="card-body mx-auto" style="max-width: 800px">
-            <h4 class="card-title mt-3 text-center">Create New Category</h4>
+            <h4 th:unless="${category.id}" class="card-title mt-3 text-center">
+              Create New Category
+            </h4>
+            <h4 th:if="${category.id}" class="card-title mt-3 text-center">
+              Update Category
+            </h4>
 
             <form
               th:action="@{/admin/save-category}"
@@ -49,10 +54,25 @@
               ></div>
               <div th:class="alert-danger" id="passwordError"></div>
               <!-- submit button -->
-              <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-block">
-                  Create New Category
-                </button>
+              <div class="form-group row">
+                <div class="col-4">
+                  <button type="submit" class="btn btn-primary btn-block">
+                    <span th:unless="${category.id}"> Create New Category</span>
+                    <span th:if="${category.id}"> Update Category</span>
+                  </button>
+                </div>
+                <div class="col-4">
+                  <button type="reset" class="btn btn-warning btn-block">
+                    Reset info
+                  </button>
+                </div>
+                <div class="col-4">
+                  <a th:href="@{/admin/management-category}">
+                    <button type="button" class="btn btn-danger btn-block">
+                      Cancel
+                    </button>
+                  </a>
+                </div>
               </div>
               <!-- form-group// -->
             </form>

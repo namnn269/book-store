@@ -12,14 +12,14 @@ public interface IAuthorService {
 
 	Optional<Author> findById(Long id);
 
-	List<Author> findAll();
+	List<Author> findAll(int pageNo, int pageSize, String sortBy, String searchFor);
 
-	List<Author> findAll(int pageNo, int pageSize, String sortBy);
-
-	Page<Author> getPageAuthor(int pageNo, int pageSize, String sortBy);
+	Page<Author> getPageAuthor(int pageNo, int pageSize, String sortBy, String searchFor);
 
 	Message save(Author author);
 
 	Message delete(Long id);
+
+	List<Author> findAll();
 
 }

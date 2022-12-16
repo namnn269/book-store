@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.nam.entity.Category;
@@ -44,17 +45,25 @@ public class CategoryServiceImpl implements ICategoryService {
 	}
 
 	@Override
-	public List<Category> findAll(int pageNo, int pageSize, String sortBy) {
-		Page<Category> page = getPageCategory(pageNo, pageSize, sortBy);
+	public List<Category> findAll(int pageNo, int pageSize, String sortBy, String seachFor) {
+		Page<Category> page = getPageCategory(pageNo, pageSize, sortBy, seachFor);
 		if (!page.hasContent())
 			return Collections.emptyList();
 		return page.getContent();
-	}
+	} 
 
 	@Override
-	public Page<Category> getPageCategory(int pageNo, int pageSize, String sortBy) {
-		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-		Page<Category> pageCategory = categoryRepo.findAll(pageable);
+	public Page<Category> getPageCategory(int pageNo, int pageSize, String sortBy, String searchFor) {
+		
+		int partitionIndex = sortBy.indexOf("-");
+		String sortByWord = sortBy.substring(0, partitionIndex);
+		String ascOrDesc = sortBy.substring(partitionIndex + 1);
+		Direction direction = Direction.ASC;
+		if (ascOrDesc.equalsIgnoreCase("DESC"))
+			direction = Direction.DESC;
+		
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(direction ,sortByWord));
+		Page<Category> pageCategory = categoryRepo.findAllByPageableAndSearch(searchFor, pageable);
 		return pageCategory;
 	}
 
@@ -63,7 +72,7 @@ public class CategoryServiceImpl implements ICategoryService {
 		Optional<Category> delCategory=categoryRepo.findById(id);
 		if(delCategory.isPresent()) {
 			categoryRepo.delete(delCategory.get());
-			return new Message("Xóa thành công! ID: "+id);
+			return new Message("Xóa thể loại thành công! ID: "+id);
 		} else {
 			throw new ObjectNotFoundException("Không tìm thấy thể loại");
 		}

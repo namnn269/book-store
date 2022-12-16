@@ -14,9 +14,9 @@ import com.nam.exception_mesage.Message;
 public interface IUserService {
 	List<User> findAll();
 
-	List<UserDto> findAll(int pageNo, int pageSize, String sortBy);
+	List<UserDto> findAll(int pageNo, int pageSize, String searchKey, Long roleId, int status);
 
-	Page<User> getPageable(int pageNo, int pageSize, String sortBy);
+	Page<User> getPageable(int pageNo, int pageSize, String searchKey, Long roleId, int status);
 
 	Optional<?> saveNewRegisterUser(UserRegistrationFormDto userRegDto);
 

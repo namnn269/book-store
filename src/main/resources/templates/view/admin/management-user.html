@@ -21,15 +21,49 @@
                     ><i class="material-icons">&#xE147;</i>
                     <span>Add New User</span></a
                   >
-                  <a href="#" class="btn btn-secondary"
-                    ><i class="material-icons">&#xE24D;</i>
-                    <span>Export to Excel</span></a
-                  >
                 </div>
               </div>
             </div>
-             <div th:if="${message}" class="alert alert-success">[[${message}]]</div>
-            <div th:if="${error}" class="alert alert-danger">[[${error}]]</div>
+            <div class="message"></div>
+            <div th:if="${message}" class="alert alert-success alert-server">
+              [[${message}]]
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-server">
+              [[${error}]]
+            </div>
+            <div class="dropdown row">
+              <div class="col-2">
+                <label for="quantity">Số sản phẩm/trang</label>
+                <select class="form-select border" name="" id="quantity">
+                  <option value="3">3</option>
+                  <option value="6">6</option>
+                  <option value="9">9</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="roleId">Lọc theo quyền hạn</label>
+                <select class="form-select border" id="roleId">
+                  <option value="0">-- Không --</option>
+                  <option
+                    th:each="i : ${roles}"
+                    th:value="${i.id}"
+                    th:text="${i.roleName}"
+                  ></option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="status">Lọc theo trạng thái</label>
+                <select class="form-select border" id="status">
+                  <option value="2">-- Không --</option>
+                  <option value="1">Enabled</option>
+                  <option value="0">Disabled</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <br />
+                <button class="btn btn-success" id="confirm-btn">OK</button>
+              </div>
+            </div>
             <table class="table table-striped table-hover" id="table">
               <thead>
                 <tr>
@@ -48,104 +82,165 @@
                 <!-- tr end -->
               </tbody>
             </table>
-            <div class="clearfix">
-              <div class="hint-text">
-                Tổng
-                <b>[[${totalElements}]]</b> thành viên
-              </div>
-              <ul class="pagination">
-                <li class="previous-page-item">
-                  <a href="#" class="page-link">Previous</a>
-                </li>
-                <th:block th:each="i : ${#numbers.sequence(1,totalPages)}">
-                  <li class="page-item">
-                    <a href="#" class="page-link">[[${i}]]</a>
-                  </li>
-                </th:block>
-                <li class="next-page-item">
-                  <a href="#" class="page-link">Next</a>
-                </li>
-              </ul>
-            </div>
+            <div class="clearfix"></div>
           </div>
         </div>
       </div>
     </div>
     <!-- /#page-content-wrapper -->
     <th:block layout:fragment="script">
+      <style>
+        .delete {
+          border: none;
+          background-color: transparent;
+        }
+        #confirm-btn {
+          height: 36px;
+          width: 60px;
+        }
+        .border {
+          height: 29px;
+          font-size: 12px;
+          border: solid 1px #7a7a7a !important;
+        }
+      </style>
       <script
         type="text/javascript"
         th:src="@{/js/management-user.js}"
       ></script>
 
-      <script> // lần vào trang đầu tiên tải trang 1
-      // Lấy phần tử '.page-item' đầu tiên gán class 'active'
-      let pageSizeDefalut = 6;
-      $(document).ready(function () {
-        callAjax(0, pageSizeDefalut, "id");
-        $(".pagination").find(".page-item").first().addClass("active");
-      });
+      <script>
+        $(document).ready(function () {
+          // lần vào trang đầu tiên tải trang 1
+          callAjax(0);
 
-      // lấy vị trí nút bấm và gán 'avtive' => gọi AJAX
-      $("body").on("click", ".page-item", function () {
-        $(".page-item").removeClass("active");
-        $(this).addClass("active");
-        let pageNo = Number.parseInt($(this).text()) - 1;
-        callAjax(pageNo, pageSizeDefalut, "id");
-      });
+          $("body").on("click", ".delete", function () {
+            let delId = $(this).val();
+            if (confirm("Xóa user sẽ xóa thông tin và orders của user???")) {
+              callAjaxDelele(delId);
+            }
+          });
 
-      // NEXT: lấy vị trí nút kế tiếp và gán active. nút trước bỏ
-      $(document).ready(function () {
-        $(".next-page-item").click(function () {
-          $(".pagination")
-            .find(".page-item.active")
-            .next()
-            .addClass("active");
+          // lấy vị trí nút bấm và gán 'active' => gọi AJAX
+          $("body").on("click", ".page-item", function () {
+            $(".page-item").removeClass("active");
+            $(this).addClass("active");
+            let pageNo = Number.parseInt($(this).text() - 1);
+            callAjax(pageNo);
+          });
 
-          $(".pagination")
-            .find(".page-item.active")
-            .prev()
-            .removeClass("active");
+          // lấy vị trí nút kế tiếp và gán active. nút trước bỏ
+          $("body").on("click", ".next-page-item", function () {
+            $(".pagination")
+              .find(".page-item.active")
+              .next()
+              .addClass("active");
 
+            $(".pagination")
+              .find(".page-item.active")
+              .prev()
+              .removeClass("active");
+
+            callAjax(getCurrentPageIndex());
+          });
+
+          // lấy vị trí nút trước và gán 'active' nút sau bỏ
+          $("body").on("click", ".previous-page-item", function () {
+            $(".pagination")
+              .find(".page-item.active")
+              .prev()
+              .addClass("active");
+
+            $(".pagination")
+              .find(".page-item.active")
+              .next()
+              .removeClass("active");
+
+            callAjax(getCurrentPageIndex());
+          });
+
+          // accept confirm btn
+          $("body").on("click", "#confirm-btn", function () {
+            callAjax(0);
+          });
+
+          // search category
+          $("body").on("click", "#admin-search-btn", function () {
+            callAjax(0);
+          });
+
+          // chọn category để lọc
+          $("#categoryId").select2();
+        });
+
+        ////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////
+
+        // hàm gọi AJAX - get author
+        function callAjax(pageNo) {
+          $.ajax({
+            url: "/admin/management-user-ajax",
+            data: {
+              pageNo: pageNo,
+              pageSize: getPageSize(),
+              searchFor: getSearchFor(),
+              roleId: getRoleId(),
+              status: getStatus(),
+            },
+            success: (value) => {
+              let tbody = $("#table").find("tbody");
+              tbody.empty();
+              tbody.append(value[0]);
+              $(".clearfix").empty();
+              $(".clearfix").append(value[1]);
+            },
+          });
+        }
+
+        // hàm gọi Ajax - delete category
+        function callAjaxDelele(delId) {
+          $.ajax({
+            method: "get",
+            url: "/admin/delete-user",
+            data: { id: delId },
+            success: (value) => {
+              callAjax(getCurrentPageIndex());
+              $(".alert-server").empty();
+              $(".alert-server").removeClass();
+              $(".message").addClass("alert alert-warning");
+              $(".message").empty();
+              $(".message").append(value);
+            },
+          });
+        }
+
+        // lấy chỉ số trang hiện tại
+        function getCurrentPageIndex() {
           let currentPage =
-            Number.parseInt(
-              $(".pagination").find(".page-item.active").text()
-            ) - 1;
-          callAjax(currentPage, pageSizeDefalut, "id");
-        });
+            Number.parseInt($(".pagination").find(".page-item.active").text()) -
+            1;
+          return currentPage < 0 ? 0 : currentPage;
+        }
 
-        // PREVIOUS: lấy vị trí nút trước và gán 'active' nút sau bỏ
-        $(".previous-page-item").click(function () {
-          $(".pagination")
-            .find(".page-item.active")
-            .prev()
-            .addClass("active");
+        // lấy số phần tử 1 trang
+        function getPageSize() {
+          return Number.parseInt($("#quantity").val());
+        }
 
-          $(".pagination")
-            .find(".page-item.active")
-            .next()
-            .removeClass("active");
+        // lấy search word
+        function getSearchFor() {
+          return $("#admin-search-input").val();
+        }
 
-          let currentPage =
-            Number.parseInt(
-              $(".pagination").find(".page-item.active").text()
-            ) - 1;
+        // lấy id role filter
+        function getRoleId() {
+          return Number.parseInt($("#roleId").val());
+        }
 
-          callAjax(currentPage, pageSizeDefalut, "id");
-        });
-      });
-      // hàm gọi AJAX - get user
-      function callAjax(pageNo, pageSize, sortBy) {
-        $.ajax({
-          url: "/admin/management-user-ajax",
-          data: { pageNo: pageNo, pageSize: pageSize, sortBy: sortBy },
-          success: (value) => {
-            let tbody = $("#table").find("tbody");
-            tbody.empty();
-            tbody.append(value);
-          },
-        });
-      }
+        // lấy id status filter
+        function getStatus() {
+          return Number.parseInt($("#status").val());
+        }
       </script>
     </th:block>
   </body>

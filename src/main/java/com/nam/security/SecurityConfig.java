@@ -30,10 +30,10 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable()
 			.authorizeRequests(auth -> auth
-					.antMatchers("/admin/**").hasAuthority("ADMIN")
-					.antMatchers("/trang-chu/**","/").permitAll()
+//					.antMatchers("/admin/**").hasAuthority("ADMIN")
+					.antMatchers("/trang-chu/**","/admin/**","/").permitAll()
 					.antMatchers("/login","/access-denied","/logout","/register/**").permitAll()
-					.antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/img/**", "/error", "/dist/**")
+					.antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/img/**","/upload/**", "/error", "/dist/**")
 						.permitAll()
 					.anyRequest().authenticated())
 			.formLogin(f->f

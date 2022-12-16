@@ -15,9 +15,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.nam.dto.DisplayBookDto;
 import com.nam.entity.Book;
+import com.nam.entity.Category;
 import com.nam.entity.User;
 import com.nam.exception_mesage.ObjectNotFoundException;
 import com.nam.service.IBookService;
+import com.nam.service.ICategoryService;
 import com.nam.service.IUserService;
 
 @Controller
@@ -27,7 +29,8 @@ public class HomeController {
 	private IBookService bookService;
 	@Autowired
 	private IUserService userService;
-	private int showQuantity=3;
+	@Autowired
+	private ICategoryService categoryService;
 
 	
 	@GetMapping(value = "/test")
@@ -38,10 +41,13 @@ public class HomeController {
 
 	@GetMapping(value = { "" })
 	public String home(Model model) {
+		List<DisplayBookDto> bestSellerBooks=bookService.findBestSellerBooks();
+		List<Category> categories= categoryService.findAll();
+		
+		model.addAttribute("categories", categories);
+		model.addAttribute("bestSellerBooks", bestSellerBooks);
+		
 		User user;
-		Page<Book> page = bookService.getPageBook(0, this.showQuantity, "id");
-		int totalPages = page.getTotalPages();
-		model.addAttribute("totalPages", totalPages==0?1:totalPages);
 		try {
 			user = userService.getCurrentLoggedInUser();
 			model.addAttribute("username", user.getUsername());
@@ -56,65 +62,34 @@ public class HomeController {
 		return "view/error/error-page";
 	}
 
-	@GetMapping(value = "/trang-chu/product-home-ajax", produces = "text/plain; charset=utf-8")
+	@GetMapping(value = "/product-home-ajax")
 	@ResponseBody
-	public String callProductHomeAjax(
-			@RequestParam(defaultValue = "0") int pageNo,
-			@RequestParam(defaultValue = "1") int pageSize,
-			@RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "") String searchKey) {
-		List<DisplayBookDto> pageBook;
-		if (searchKey.equals("")) {
-			pageBook = bookService.findAll(pageNo, pageSize, sortBy);
-		} else {
-			pageBook = bookService.findAllBySearchKey(sortBy, searchKey);
-		}
-		StringBuilder html = new StringBuilder("");
-		for (DisplayBookDto bookDto : pageBook) {
-			html.append(getHtml(bookDto));
-		}
-		return html.toString();
-	}
+	public String[] callProductHomeAjax(
+			@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+			@RequestParam(value = "pageSize", defaultValue = "5") int pageSize,
+			@RequestParam(value = "searchFor", defaultValue = "") String searchFor,
+			@RequestParam(value = "categoryId", defaultValue = "0") Long categoryId,
+			@RequestParam(value = "sortbyPrice", defaultValue = "") String sortByPrice) {
+		List<DisplayBookDto> books = bookService.findAll(pageNo, pageSize, searchFor, categoryId, sortByPrice);
 
-	@GetMapping(value = "/trang-chu/product-search-home-ajax", produces = "text/plain; charset=utf-8")
-	@ResponseBody
-	public String callSearchProductHomeAjax(
-						@RequestParam(defaultValue = "id") String sortBy,
-						@RequestParam(defaultValue = "") String searchKey) {
-		List<DisplayBookDto> bookDtos = bookService.findAllBySearchKey(sortBy, searchKey);
-		StringBuilder html = new StringBuilder("");
-		for (DisplayBookDto bookDto : bookDtos) {
-			html.append(getHtml(bookDto));
-		}
-		if(bookDtos.isEmpty())html.append("<div class='alert alert-warning'>Không tìm thấy sản phẩm nào!</div>");
-		return html.toString();
-	}
-	
-	@GetMapping(value = "/trang-chu/show-book-by-category-ajax", produces = "text/plain; charset=utf-8")
-	@ResponseBody
-	public String callSearchProductHomeAjax(
-						@RequestParam(defaultValue = "1",value = "categoryId") Long categoryId,
-						@RequestParam(defaultValue = "id",value = "sortBy") String sortBy) {
-		List<DisplayBookDto> bookDtos = bookService.findByCategory(categoryId,sortBy);;
+		if(books.isEmpty())
+			return new String[] { "<div class='alert alert-warning'>Không tìm thấy sản phẩm nào!</div>"};
 		
 		StringBuilder html = new StringBuilder("");
-		for (DisplayBookDto bookDto : bookDtos) {
-			html.append(getHtml(bookDto));
+		for (DisplayBookDto bookDto : books) {
+			html.append(getBookItemHtml(bookDto));
 		}
-		if(bookDtos.isEmpty())html.append("<div class='alert alert-warning'>Không tìm thấy sản phẩm nào!</div>");
-		return html.toString();
+		String paginationHtml = getPaginationHtml(pageNo, pageSize, searchFor, categoryId, sortByPrice);
+		return new String[] { html.toString(), paginationHtml };
 	}
 	
-	@GetMapping(value = "/trang-chu/change-show-quantity", produces = "text/plain; charset=utf-8")
-	@ResponseBody
-	public void changeShowQuantityAjax(
-			@RequestParam(defaultValue = "3", value = "quantity") int quantity) {
-		this.showQuantity=quantity;
-	}
+	
 
-	@GetMapping(value = "/trang-chu/book-detail/{id}")
+	@GetMapping(value = "/book-detail/{id}")
 	public ModelAndView showBookDetail(@PathVariable("id") Long id) {
+		List<DisplayBookDto> bestSellerBooks=bookService.findBestSellerBooks();
 		ModelAndView mav = new ModelAndView("view/user/book-detail");
+		mav.addObject("bestSellerBooks", bestSellerBooks);
 		User user=null;
 		try {
 			DisplayBookDto bookDto = bookService.findBookDetailById(id);
@@ -130,14 +105,8 @@ public class HomeController {
 		return mav;
 	}
 
-	@GetMapping(value = "/trang-chu/cart")
-	public ModelAndView showShoppingCart() {
-		ModelAndView mav = new ModelAndView("/view/user/shopping-cart");
 
-		return mav;
-	}
-
-	private String getHtml(DisplayBookDto bookDto) {
+	private String getBookItemHtml(DisplayBookDto bookDto) {
 		String linkDetail = "/trang-chu/book-detail/" + bookDto.getId() + "";
 		String authors = "";
 		for (String author : bookDto.getAuthors()) {
@@ -171,7 +140,32 @@ public class HomeController {
 				+ "              </div>";
 		return html;
 	}
-	
+
+	private  String getPaginationHtml(int pageNo, int pageSize, String searchFor, long categoryId, String sortByPrice) {
+		Page<Book> bookPage = bookService.getPageBook(pageNo, pageSize, searchFor, categoryId, sortByPrice);
+		String html =			"<div class='hint-text'>"
+				+ "                Tổng"
+				+ "                <b>"+bookPage.getTotalElements()+"</b> sách"
+				+ "              </div>"
+				+ "              <ul class='pagination'>"
+				+ "                <li class='previous-page-item'>"
+				+ "                  <a href='#home-search-input' class='page-link'>Previous</a>"
+				+ "                </li>";
+				
+		for (int i = 1; i <= bookPage.getTotalPages(); i++) {
+			html += "                  <li class='page-item " + (i == pageNo + 1 ? "active":" ")+"'>"
+				+ "                    <a href='#home-search-input' class='page-link'>"+i+"</a>"
+				+ "                  </li>";
+		}
+				
+				html+=
+				 "                <li class='next-page-item'>"
+				+ "                  <a href='#home-search-input' class='page-link'>Next</a>"
+				+ "                </li>"
+				+ "              </ul>";
+		
+		return html;
+	}
 }
 
 

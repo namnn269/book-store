@@ -11,7 +11,7 @@ import com.nam.entity.Order;
 import com.nam.entity.OrderDetail;
 import com.nam.entity.User;
 import com.nam.exception_mesage.Message;
-import com.nam.mapper.MapperOrderDetail;
+import com.nam.mapper.IOrderDetailMapper;
 import com.nam.repository.IOrderDetailRepository;
 import com.nam.repository.IOrderRepository;
 import com.nam.service.IOrderDetailService;
@@ -27,7 +27,7 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
 	@Autowired
 	private IOrderRepository orderRepo;
 	@Autowired
-	private MapperOrderDetail mapperOrderDetail;
+	private IOrderDetailMapper orderDetailMapper;
 
 	@Override
 	public Message save(OrderDetail orderDetail) {
@@ -39,14 +39,14 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
 	public List<PurchasedOrderDetailDto> getListPurchasedOrderDetailDtos() {
 		User user = userService.getCurrentLoggedInUser();
 
-		List<Order> orders = orderRepo.findByUserAndStatus(user, 1);
+		List<Order> orders = orderRepo.findByUserAndStatus(user, 1, 2);
 		List<PurchasedOrderDetailDto> purchasedOrderDetailDtos = new ArrayList<>();
 
 		orders.stream()
 		.forEach(order -> order
 							.getOrderDetails()
 							.stream()
-							.forEach(orderDetail -> {purchasedOrderDetailDtos.add(mapperOrderDetail.fromOrderDetailToPurchasedBookDto(orderDetail));}
+							.forEach(orderDetail -> {purchasedOrderDetailDtos.add(orderDetailMapper.fromOrderDetailToPurchasedBookDto(orderDetail));}
 				));
 		return purchasedOrderDetailDtos;
 	}

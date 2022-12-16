@@ -1,4 +1,4 @@
-package com.nam.mapper;
+package com.nam.mapper.impl;
 
 import java.util.List;
 
@@ -8,13 +8,15 @@ import org.springframework.stereotype.Component;
 import com.nam.dto.ProfileUserDto;
 import com.nam.entity.ProfileUser;
 import com.nam.entity.User;
+import com.nam.mapper.IProfileMapper;
 import com.nam.repository.IProfileRepository;
 
 @Component
-public class MapperProfile {
+public class ProfileMapper implements IProfileMapper {
 	@Autowired
 	private IProfileRepository profileRepo;
 
+	@Override
 	public ProfileUserDto fromUserToProfileDto(User user) {
 		ProfileUserDto profileUserDto = new ProfileUserDto();
 		if (user == null)

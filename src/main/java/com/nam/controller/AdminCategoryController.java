@@ -31,16 +31,9 @@ public class AdminCategoryController {
 	@Autowired
 	private ICategoryService categoryService;
 
-	private int pageNo=0;
-	private int pageSize=6;
-	private String sortBy="id";
-	
 	@GetMapping("/management-category")
 	public String categoryManagement(Model model, @ModelAttribute("message") String message,
 									@ModelAttribute("error") String error) {
-		Page<Category> categoryPage = categoryService.getPageCategory(this.pageNo, this.pageSize, this.sortBy);
-		model.addAttribute("totalPages", categoryPage.getTotalPages());
-		model.addAttribute("totalElements", categoryPage.getTotalElements());
 		model.addAttribute("message", message.equals("")?null:message);
 		model.addAttribute("error", error.equals("")?null:error);
 		return "view/admin/management-category";
@@ -87,32 +80,31 @@ public class AdminCategoryController {
 	}
 	
 	// handle delete category
-	@GetMapping(value = "/detete-category/{id}")
-	public ModelAndView deleteCategory(@PathVariable("id") Long id, RedirectAttributes ra) {
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("redirect:/admin/management-category");
+	@GetMapping(value = "/delete-category", produces = "text/plain; charset=utf-8")
+	@ResponseBody
+	public String deleteCategory(@RequestParam("id") Long id) {
+		Message message;
 		try {
-			Message message = categoryService.delete(id);
-			ra.addFlashAttribute("message", message.getContent());
+			 message = categoryService.delete(id);
 		} catch (ObjectNotFoundException o) {
-			mav.setViewName("redirect:/admin/management-category");
+			message=new Message(o.getMessage());
 		}
-		return mav;
+		return message.getContent();
 	}
 	
 	// providing list category by ajax
-	@GetMapping(value = "/management-category-ajax", produces = "text/plain; charset=utf-8")
+	@GetMapping(value = "/management-category-ajax")
 	@ResponseBody
-	public String callCategoryAjax(@RequestParam(defaultValue = "0") int pageNo,
-									@RequestParam(defaultValue = "5") int pageSize,
-									@RequestParam(defaultValue = "id") String sortBy) {
-		this.pageNo=pageNo;this.pageSize=pageSize;this.sortBy=sortBy;
-		String html=""; 
-		List<Category> list = categoryService.findAll(pageNo, pageSize, sortBy);
-		int i=1;
+	public String[] callCategoryAjax(	@RequestParam(defaultValue = "0") int pageNo,
+										@RequestParam(defaultValue = "6") int pageSize,
+										@RequestParam(defaultValue = "id") String sortBy,
+										@RequestParam(defaultValue = "") String searchFor) {
+		String html = "";
+		List<Category> list = categoryService.findAll(pageNo, pageSize, sortBy, searchFor);
+		int i = 1;
 		for (Category category : list) {
-			html+=" <tr>"
-					+ "                    <td>"+(pageNo*pageSize+i)+"</td>"
+			html += " <tr>"
+					+ "                    <td>" + (pageNo * pageSize + i) + "</td>"
 					+ "                    <td>"
 					+ "                      <a href='#'"
 					+ "                        ><img"
@@ -121,35 +113,58 @@ public class AdminCategoryController {
 					+ "                          class='avatar'"
 					+ "                          alt='Avatar'"
 					+ "                        />"
-					+ "                        "+category.getCategoryTitle()+"</a"
+					+ "                        " + category.getCategoryTitle() + "</a"
 					+ "                      >"
 					+ "                    </td>"
-					+ ""
 					+ "                    <td>"
 					+ "                      <a"
-					+ "                        href='/admin/update-category/"+category.getId()+"'"
+					+ "                        href='/admin/update-category/" + category.getId() + "'"
 					+ "                        class='settings'"
 					+ "                        title='Settings'"
 					+ "                        data-toggle='tooltip'"
 					+ "                        ><i class='material-icons'>&#xE8B8;</i></a"
 					+ "                      >"
-					+ "                      <a"
-					+ "                        href='/admin/detete-category/"+category.getId()+"'"
+					+ "                      <button"
+					+ "                        value=" + category.getId()
 					+ "                        class='delete'"
 					+ "                        title='Delete'"
 					+ "                        data-toggle='tooltip'"
-					+ "                        ><i class='material-icons'>&#xE5C9;</i></a"
-					+ "                      >"
+					+ "                        ><i class='material-icons'>&#xE5C9;</i></button>"
 					+ "                    </td>"
 					+ "                  </tr>";
 			i++;
 		}
+		
+		String htmlPagination = getPaginationString(pageNo, pageSize, sortBy, searchFor);
+		
+		return new String[] { html, htmlPagination};
+	}
+
+	private  String getPaginationString(int pageNo, int pageSize, String sortBy, String searchFor) {
+		Page<Category> categoryPage = categoryService.getPageCategory(pageNo, pageSize, sortBy, searchFor);
+		String html =			"<div class='hint-text'>"
+				+ "                Tổng"
+				+ "                <b>"+categoryPage.getTotalElements()+"</b> thể loại"
+				+ "              </div>"
+				+ "              <ul class='pagination'>"
+				+ "                <li class='previous-page-item'>"
+				+ "                  <a href='#' class='page-link'>Previous</a>"
+				+ "                </li>";
+				
+		for (int i = 1; i <= categoryPage.getTotalPages(); i++) {
+			html += "                  <li class='page-item " + (i == pageNo + 1 ? "active":" ")+"'>"
+				+ "                    <a href='#' class='page-link'>"+i+"</a>"
+				+ "                  </li>";
+		}
+				
+				html+=
+				 "                <li class='next-page-item'>"
+				+ "                  <a href='#' class='page-link'>Next</a>"
+				+ "                </li>"
+				+ "              </ul>";
+		
 		return html;
 	}
-	
-	
-
-
 }
 
 

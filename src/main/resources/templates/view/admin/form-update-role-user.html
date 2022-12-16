@@ -89,15 +89,26 @@
               ></div>
               <div th:class="alert-danger" id="passwordError"></div>
               <!-- submit button -->
-              <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-block">
-                  Update Account
-                </button>
+              <div class="form-group row">
+                <div class="col-4">
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Update User
+                  </button>
+                </div>
+                <div class="col-4">
+                  <button type="reset" class="btn btn-warning btn-block">
+                    Reset info
+                  </button>
+                </div>
+                <div class="col-4">
+                  <a th:href="@{/admin/management-user}">
+                    <button type="button" class="btn btn-danger btn-block">
+                      Cancel
+                    </button>
+                  </a>
+                </div>
               </div>
               <!-- form-group// -->
-              <p class="text-center">
-                Have an account? <a th:href="@{/login}">Log In</a>
-              </p>
             </form>
           </article>
         </div>

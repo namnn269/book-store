@@ -21,8 +21,8 @@ import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.ObjectNotFoundException;
 import com.nam.exception_mesage.OrderFailureException;
 import com.nam.exception_mesage.OverQuantityException;
-import com.nam.mapper.MapperOrderDetail;
-import com.nam.mapper.MapperUser;
+import com.nam.mapper.IOrderDetailMapper;
+import com.nam.mapper.IUserMapper;
 import com.nam.repository.IBookRepository;
 import com.nam.repository.IOrderDetailRepository;
 import com.nam.repository.IOrderRepository;
@@ -44,9 +44,9 @@ public class OrderServiceImpl implements IOrderService {
 	@Autowired
 	private IOrderDetailRepository orderrDetailRepo;
 	@Autowired
-	private MapperOrderDetail mapperOrderDetail;
+	private IOrderDetailMapper orderDetailMapper;
 	@Autowired
-	private MapperUser mapperUser;
+	private IUserMapper userMapper;
 	
 	@Override
 	public List<Order> findAllByUser(User user) {
@@ -59,7 +59,7 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public void addToCart(Long id, Long quantity) {
 		User user = userService.getCurrentLoggedInUser();
-		List<Order> orders = orderRepo.findByUserAndStatus(user, 0);
+		List<Order> orders = orderRepo.findByUserAndStatus(user, 0, 0);
 		Book book = bookRepo.findById(id).get();
 		
 		if(book.getAmountInStock()<quantity) 
@@ -115,7 +115,7 @@ public class OrderServiceImpl implements IOrderService {
 
 	@Override
 	public Order findCurrentOrder(User user) {
-		List<Order> orders= orderRepo.findByUserAndStatus(user, 0);
+		List<Order> orders= orderRepo.findByUserAndStatus(user, 0, 0);
 		if(orders.isEmpty())return null;
 		return orders.get(0);
 	}
@@ -153,7 +153,7 @@ public class OrderServiceImpl implements IOrderService {
 			User user = userService.getCurrentLoggedInUser();
 			if(user==null)return;
 			Order order= findCurrentOrder(user);
-			Collection<OrderDetail> orderDetails=	order.getOrderDetails();
+			Collection<OrderDetail> orderDetails = order.getOrderDetails();
 			Optional<OrderDetail> opDetail = orderDetails
 										.stream()
 										.filter(x->Objects.equals(x.getBook().getId(), id))
@@ -165,7 +165,6 @@ public class OrderServiceImpl implements IOrderService {
 			book.removeOrderDetail(orderDetail);
 			order.removeOrderDetail(orderDetail);
 			orderrDetailRepo.delete(orderDetail);
-			System.out.println("in end delete");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -214,9 +213,9 @@ public class OrderServiceImpl implements IOrderService {
 		List<AdminOrderDto> ordersDtos = orders.stream().map(order -> {
 			AdminOrderDto adminOrder = new AdminOrderDto();
 			adminOrder.setId(order.getId());
-			adminOrder.setBuyer(mapperUser.fromUserToUserDto(order.getUser()));
+			adminOrder.setBuyer(userMapper.fromUserToUserDto(order.getUser()));
 			adminOrder.setBookDtos(order.getOrderDetails().stream()
-					.map(mapperOrderDetail::fromOrderDetailToPurchasedBookDto)
+					.map(orderDetailMapper::fromOrderDetailToPurchasedBookDto)
 					.collect(Collectors.toList()));
 			return adminOrder;
 		}).collect(Collectors.toList());
