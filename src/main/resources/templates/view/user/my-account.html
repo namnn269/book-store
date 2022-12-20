@@ -49,6 +49,11 @@
                 </ul>
                 <a th:href="@{/account/form-info}" style="font-size: 20px"
                   >Cập nhật thông tin</a
+                ><br />
+                <a
+                  th:href="@{/account/form-change-password}"
+                  style="font-size: 20px"
+                  >Thay đổi mật khẩu</a
                 >
                 <hr />
 
@@ -84,12 +89,14 @@
                               alt="${book.bookTitle}"
                           /></a>
                         </td>
-                        <td class="goods-page-ref-no" style="font-size: 20px">
+                        <td class="goods-page-ref-no" style="font-size: 16px">
                           [[${book.bookTitle}]]
                         </td>
                         <td class="goods-page-ref-no">
                           <th:block th:each="author : ${book.authors}">
-                            <div style="text-align: left">-- [[${author}]]</div>
+                            <div style="text-align: left; font-size: 15px">
+                              -- [[${author}]]
+                            </div>
                           </th:block>
                         </td>
                         <td class="goods-page-quantity">
@@ -101,7 +108,7 @@
                           </div>
                         </td>
                         <td class="goods-page-price">
-                          <strong><span>$</span>[[${book.price}]]</strong>
+                          <strong>[[${book.price}]]<span>đ</span></strong>
                         </td>
                         <td class="goods-page-timesd">
                           <strong>[[${book.date}]]</strong>

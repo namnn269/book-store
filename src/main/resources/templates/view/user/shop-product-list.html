@@ -21,9 +21,13 @@
                   <a th:href="@{'/trang-chu/book-detail/'+${i.id}}"
                     ><img th:src="@{${i.imgLink}}" alt="${i.bookTitle}"
                   /></a>
-                  <h3>[[${i.bookTitle}]]</h3>
-                  <p class="best-seller">[[${i.category}]]</p>
-                  <div class="price">$[[${i.price}]]</div>
+                  <h3 style="font-weight: bold">[[${i.bookTitle}]]</h3>
+                  <h3 style="font-style: italic; font-size: 12px">
+                    [[${i.category}]]
+                  </h3>
+                  <div class="price" style="text-transform: lowercase">
+                    [[${i.price}]]đ
+                  </div>
                 </div>
               </th:block>
             </div>
@@ -66,15 +70,21 @@
               </div>
               <hr />
               <div class="dropdown row">
-                <div class="col-2">
-                  <label for="quantity">Số sản phẩm/trang</label>
+                <div class="col-md-2 col-sm-6">
+                  <label for="quantity">Số lượng hiển thị</label>
                   <select class="form-select border" name="" id="quantity">
-                    <option value="3">3</option>
-                    <option value="6">6</option>
-                    <option value="9">9</option>
+                    <option th:value="#{page.size.home.1}">
+                      [[#{page.size.home.1}]]
+                    </option>
+                    <option th:value="#{page.size.home.2}">
+                      [[#{page.size.home.2}]]
+                    </option>
+                    <option th:value="#{page.size.home.3}">
+                      [[#{page.size.home.3}]]
+                    </option>
                   </select>
                 </div>
-                <div class="col-2">
+                <div class="col-md-2 col-sm-6">
                   <label for="categoryId">Lọc theo thể loại</label>
                   <select class="form-select border" id="categoryId">
                     <option value="0">-- Không --</option>
@@ -85,7 +95,7 @@
                     ></option>
                   </select>
                 </div>
-                <div class="col-2">
+                <div class="col-md-2 col-sm-6">
                   <label for="sort-by-price">Sắp xếp theo giá</label>
                   <select class="form-select border" name="" id="sort-by-price">
                     <option value="">Không</option>
@@ -93,7 +103,7 @@
                     <option value="price-desc">Giá (Giảm dần)</option>
                   </select>
                 </div>
-                <div class="col-2">
+                <div class="col-md-2 col-sm-6">
                   <br />
                   <button class="btn btn-success" id="confirm-btn">OK</button>
                 </div>
@@ -141,9 +151,10 @@
           margin-top: 10px;
           font-size: 13px;
         }
-        .best-seller {
-          font-size: 12px;
-          font-style: italic;
+
+        .img-item {
+          max-height: 300px;
+          width: -webkit-fill-available;
         }
       </style>
       <script type="text/javascript" th:src="@{/js/home.js}"></script>

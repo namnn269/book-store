@@ -30,9 +30,6 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "order_address", columnDefinition = "text")
-	private String address;
-
 	@Column(name = "order_date")
 	private Timestamp orderDate;
 

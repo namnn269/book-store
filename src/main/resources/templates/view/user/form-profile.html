@@ -20,7 +20,7 @@
                 th:action="@{/account/update-info}"
                 th:object="${profile}"
                 method="post"
-                th:onsubmit="return checkFormSignUp()"
+                th:onsubmit="return checkFormUpdate()"
               >
                 <input type="hidden" th:field="*{id}" />
 
@@ -33,6 +33,7 @@
                     placeholder="Địa chỉ"
                     type="text"
                     required="required"
+                    id="address"
                   />
                 </div>
 
@@ -45,6 +46,7 @@
                     placeholder="Số điện thoại"
                     type="text"
                     required="required"
+                    id="phone"
                   />
                 </div>
 
@@ -57,7 +59,9 @@
                     placeholder="Ngày sinh"
                     type="date"
                     required="required"
+                    id="date"
                   />
+                  <!-- required="required" -->
                 </div>
                 <!-- gender -->
                 <h5>Giới tính</h5>
@@ -75,6 +79,7 @@
                 ></div>
                 <div th:class="alert-danger" id="passwordError"></div>
                 <!-- submit button -->
+                <div id="message"></div>
                 <div class="form-group">
                   <button type="submit" class="btn btn-primary btn-block">
                     Update
@@ -94,7 +99,23 @@
       <!-- END SIDEBAR & CONTENT -->
     </div>
     <th:block layout:fragment="script">
-      <script type="text/javascript"></script>
+      <script type="text/javascript">
+        $(document).ready(function () {});
+        function checkFormUpdate() {
+          let phone = $("#phone").val();
+          let address = $("#address").val();
+          let date = $("#date").val();
+          if (isNaN(phone) || phone.length < 9 || phone.length > 11) {
+            $("#message").addClass("alert alert-danger");
+            $("#message").text("Định dạng SĐT không đúng!");
+            return false;
+          } else if (!date || !phone || !address) {
+            $("#message").text("Nhập thiếu thông tin!");
+            return false;
+          }
+          return true;
+        }
+      </script>
       <script type="text/javascript" th:src="@{/js/myaccount.js}"></script>
     </th:block>
   </body>

@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,16 +27,17 @@ import com.nam.dto.UserRegistrationFormDto;
 import com.nam.dto.UserUpdateDto;
 import com.nam.entity.Role;
 import com.nam.entity.User;
+import com.nam.event.RegistrationCompletionEvent;
 import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.ObjectAlreadyExistedException;
 import com.nam.exception_mesage.ObjectNotFoundException;
 import com.nam.exception_mesage.ValidFormException;
-import com.nam.registration.RegistrationCompletionEvent;
 import com.nam.repository.IRoleRepository;
 import com.nam.service.IUserService;
 import com.nam.utils.UrlFromUser;
 
 @Controller
+@PropertySource(value = "messages.properties", encoding = "utf-8")
 @RequestMapping(value = "/admin")
 public class AdminUserController {
 
@@ -44,13 +47,10 @@ public class AdminUserController {
 	private ApplicationEventPublisher publisher;
 	@Autowired
 	private IRoleRepository roleRepo;
+	@Autowired
+	private Environment env;
 
-	@GetMapping("/test")
-	public String adminTest() {
-		return "view/admin/admin-test";
-	}
-
-	// show list user
+	/* Trả về trang quản lý người dùng */
 	@GetMapping({"/management-user",""})
 	public String userManagement(Model model, @ModelAttribute("message") String message,
 												@ModelAttribute("error") String error) {
@@ -62,14 +62,14 @@ public class AdminUserController {
 	}
 	
 
-	// show form đăng ký thành viên từ admin
+	/* show form đăng ký thành viên từ admin */
 	@GetMapping(value = "/new-user")
 	public String showUserForm(Model model) {
 		model.addAttribute("user", new UserRegistrationFormDto());
 		return "view/admin/form-add-new-user";
 	}
 
-	// lấy obj từ form đăng ký -> đăng ký user hoặc xử lý lỗi
+	/* lấy obj từ form đăng ký -> đăng ký user hoặc xử lý lỗi */
 	@PostMapping(value = "/add-new-user")
 	public ModelAndView addNewUser(@ModelAttribute UserRegistrationFormDto userRegDto, 
 				HttpServletRequest http, RedirectAttributes ra) {
@@ -85,7 +85,7 @@ public class AdminUserController {
 			mav.addObject("user", userRegDto);
 			mav.setViewName("view/admin/form-add-new-user");
 		} catch (Exception e) {
-			mav = new ModelAndView("signin-up/common-error");
+			mav = new ModelAndView("view/error/common-error");
 			mav.addObject("errorMsg", new ErrorMsgDto("Cannot save new user!"));
 			e.printStackTrace();
 		}
@@ -93,7 +93,7 @@ public class AdminUserController {
 	}
 
 	
-	// lấy id user cần update -> show form update
+	/* lấy id user cần update -> show form update */
 	@GetMapping("/update-user/{id}")
 	public ModelAndView showFormUpdate(@PathVariable("id") Long id, RedirectAttributes ra) {
 		ModelAndView mav = new ModelAndView();
@@ -104,13 +104,13 @@ public class AdminUserController {
 			mav.addObject("roles", roles);
 			mav.setViewName("view/admin/form-update-role-user");
 		} catch (ObjectNotFoundException e) {
-			ra.addFlashAttribute("error", "Không tìm thấy user");
+			ra.addFlashAttribute("error", env.getProperty("message.not.find.user"));
 			mav.setViewName("redirect:/admin/management-user");
 		}
 		return mav;
 	}
 	
-	// lấy obj từ form -> thực hiện update
+	/* lấy obj từ form -> thực hiện update */
 	@PostMapping(value = "/update-user")
 	public ModelAndView updateUser(@ModelAttribute UserUpdateDto dto, RedirectAttributes ra) {
 		ModelAndView mav = new ModelAndView();
@@ -128,7 +128,7 @@ public class AdminUserController {
 		return mav;
 	}
 	
-	// lấy id từ đường dẫn -> delete user
+	/* lấy id từ đường dẫn -> thực hiện xóa user */
 	@GetMapping(value = "/delete-user", produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public String deleteUser(@RequestParam("id") Long id, RedirectAttributes ra) {
@@ -141,14 +141,16 @@ public class AdminUserController {
 		return message.getContent();
 	}
 	
-	// trả về call AJAX
+	/* Trả về 1 mảng HTML
+	 * Phần tử 1 chứa HTML thông tin người dùng
+	 * Phẩn tử 2 chứa HTML chứa thông tin pagination */
 		@GetMapping(value = "/management-user-ajax")
 		@ResponseBody
 		public String[] callAjaxUser(	@RequestParam(defaultValue = "0", name = "pageNo") int pageNo,
-									@RequestParam(defaultValue = "6", name = "pageSize") int pageSize,
-									@RequestParam(defaultValue = "", name = "searchFor") String searchFor,
-									@RequestParam(defaultValue = "0") Long roleId,
-									@RequestParam(defaultValue = "2") int status) {
+										@RequestParam(defaultValue = "6", name = "pageSize") int pageSize,
+										@RequestParam(defaultValue = "", name = "searchFor") String searchFor,
+										@RequestParam(defaultValue = "0") Long roleId,
+										@RequestParam(defaultValue = "2") int status) {
 			List<UserDto> list = userService.findAll(pageNo, pageSize, searchFor, roleId, status);
 			int i = 1;
 			String html = "";
@@ -156,7 +158,9 @@ public class AdminUserController {
 						
 					html +=
 					" <tr>"
-					+ "                    <td>" + ( pageNo * pageSize + i ) + "</td>"
+					+ "                    <td>" + (pageNo * pageSize + i) + " &nbsp; "
+					+ "						  <input class='delete-many-input' type='checkbox' value='"+userDto.getId()+"' />"
+					+ "					   </td>"
 					+ "                    <td>"+userDto.getUsername()+"</td>"
 					+ "                    <td>"
 					+ "                      <a href='#'"
@@ -195,6 +199,7 @@ public class AdminUserController {
 			return new String[] {html, paginationHtml};
 		}
 		
+		/* Trả về HTML chứa thông tin pagination thể loại */
 		private  String getPaginationString(int pageNo, int pageSize, String searchKey, Long roleId, int status) {
 			Page<User> userPage = userService.getPageable(pageNo, pageSize, searchKey, roleId, status);
 			String html =			"<div class='hint-text'>"

@@ -29,6 +29,7 @@ public class AdminOrderController {
 	@Autowired
 	IOrderService orderService;
 	
+	/* Hiển thị trang quản lý các order chưa được xác thực admin */
 	@GetMapping(value = "/management-order")
 	public ModelAndView managementOrder() {
 		ModelAndView mav = new ModelAndView("view/admin/management-order");
@@ -44,6 +45,7 @@ public class AdminOrderController {
 		return mav;
 	}
 	
+	/* Hiển thị trang quản lý các order đã được xác thực admin */
 	@GetMapping(value = "/confirmed-orders")
 	public ModelAndView showConfirmedOrder() {
 		ModelAndView mav = new ModelAndView("view/admin/confirmed-orders");
@@ -59,6 +61,7 @@ public class AdminOrderController {
 		return mav;
 	}
 	
+	/* Nhận vào Order ID để thực hiển xác nhận 1 order */
 	@PostMapping(value = "/management-order-ajax", produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public String confirmOrder(@RequestParam("orderId") Long orderId) {

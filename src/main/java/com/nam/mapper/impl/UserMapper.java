@@ -13,6 +13,7 @@ import com.nam.mapper.IUserMapper;
 @Component
 public class UserMapper implements IUserMapper{
 	
+	/* Map từ user thành user DTO */
 	@Override
 	public UserDto fromUserToUserDto(User user) {
 		UserDto userDto = new UserDto();

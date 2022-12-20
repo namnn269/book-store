@@ -29,12 +29,14 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
 	@Autowired
 	private IOrderDetailMapper orderDetailMapper;
 
+	/* Lưu order detail */
 	@Override
 	public Message save(OrderDetail orderDetail) {
 		orderDetailRepo.save(orderDetail);
 		return null;
 	}
 
+	/* Lấy ra danh sách order detail đã mua của khách */
 	@Override
 	public List<PurchasedOrderDetailDto> getListPurchasedOrderDetailDtos() {
 		User user = userService.getCurrentLoggedInUser();

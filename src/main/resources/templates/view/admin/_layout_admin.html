@@ -42,7 +42,7 @@
     <link
       rel="stylesheet"
       href="https://phpcoder.tech/multiselect/css/jquery.multiselect.css"
-    />  -->
+    /> -->
 
     <!-- check box ======================== -->
 
@@ -73,6 +73,7 @@
     <!-- End Bootstrap 4 + 5 -->
 
     <link th:href="@{/css/style/style.css}" rel="stylesheet" />
+    <link th:href="@{/css/jquery/bootstrap-multiselect.css}" rel="stylesheet" />
 
     <link
       th:href="@{/css/style/style-shop.css}"
@@ -224,10 +225,23 @@
       integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
       crossorigin="anonymous"
     ></script>
+    <script
+      type="text/javascript"
+      th:src="@{/js/jquey/bootstrap-multiselect.js}"
+    ></script>
+    <script type="text/javascript" th:src="@{/js/layout.js}"></script>
     <script>
-      $("body").on("click", ".nav-sidebar", () => {
-        $(".nav-sidebar").removeClass("active");
-        $(this).addClass("active");
+      $(document).ready(function () {
+        $("body").on("click", ".nav-sidebar", () => {
+          $(".nav-sidebar").removeClass("active");
+          $(this).addClass("active");
+        });
+        $("body").click(function () {
+          $(".alert-server").empty();
+          $("#message").empty();
+          $(".alert-server").removeClass();
+          $("#message").removeClass();
+        });
       });
     </script>
     <th:block layout:fragment="script"> </th:block>

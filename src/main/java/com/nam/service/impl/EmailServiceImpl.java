@@ -5,6 +5,8 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -14,17 +16,19 @@ import com.nam.dto.EmailDto;
 import com.nam.service.IEmailService;
 
 @Service
+@PropertySource(value = "messages.properties", encoding = "utf-8")
 public class EmailServiceImpl implements IEmailService {
 
 	@Autowired
 	private JavaMailSender jSender;
 
-//	@Autowired
-//	private Environment env;
+	@Autowired
+	private Environment env;
 
 	@Value("${email.from}")
 	private String mailFrom;
 
+	/* Nhận vào email Dto, gán vào email để thực hiện gửi email */
 	@Override
 	public String sendConfirmationEmail(EmailDto email) {
 		MimeMessage mimeMailMessage = jSender.createMimeMessage();
@@ -37,12 +41,12 @@ public class EmailServiceImpl implements IEmailService {
 			helper.setSubject(email.getSubject());
 			helper.setText(email.getContent(), true);
 			jSender.send(mimeMailMessage);
-			return "Email sended successfully";
+			return env.getProperty("message.send.email.success");
 		} catch (MailException m) {
-			return "Error when sending email 1";
+			return env.getProperty("message.send.email.error");
 		} catch (MessagingException e) {
 			e.printStackTrace();
-			return "Error when sending email 2";
+			return env.getProperty("message.send.email.error");
 		}
 
 	}

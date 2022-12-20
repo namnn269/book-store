@@ -17,17 +17,18 @@
             <div class="sidebar-products">
               <h2>Bestsellers</h2>
               <th:block th:each="i : ${bestSellerBooks}">
-              <div class="item">
-                <a th:href="@{'/trang-chu/book-detail/'+${i.id}}"
-                  ><img
-                    th:src="@{${i.imgLink}}"
-                    alt="${i.bookTitle}"
-                /></a>
-                <h3>
-                 [[${i.bookTitle}]]
-                </h3> <p class="best-seller">[[${i.category}]]</p>
-                <div class="price">$[[${i.price}]]</div>
-              </div>
+                <div class="item">
+                  <a th:href="@{'/trang-chu/book-detail/'+${i.id}}"
+                    ><img th:src="@{${i.imgLink}}" alt="${i.bookTitle}"
+                  /></a>
+                  <h3 style="font-weight: bold">[[${i.bookTitle}]]</h3>
+                  <h3 style="font-style: italic; font-size: 12px">
+                    [[${i.category}]]
+                  </h3>
+                  <div class="price" style="text-transform: lowercase">
+                    [[${i.price}]]đ
+                  </div>
+                </div>
               </th:block>
             </div>
           </div>
@@ -40,10 +41,11 @@
             <div th:unless="${error_book_not_found}" class="product-page">
               <div class="row" id="product-list">
                 <div class="col-md-6 col-sm-6">
-                  <div class="product-main-image">
+                  <div>
                     <img
                       th:src="${book.imgLink}"
                       alt="Cool green dress with red bell"
+                      style="height: 350px"
                       class="img-responsive"
                     />
                   </div>
@@ -52,18 +54,17 @@
                   <h1>[[${book.bookTitle}]]</h1>
                   <div class="price-availability-block clearfix">
                     <div class="price">
-                      <strong><span>$</span>[[${book.price}]]</strong>
+                      <strong>[[${book.price}]]<span>đ</span></strong>
                     </div>
-                    
                   </div>
-                  <div class="description">
-                    <h5>Mô tả:</h5>
-                    <p>[[${book.description}]]</p>
-                  </div>
+
                   <br />
-                  <h5>Tác giả:</h5>
+                  <h5 style="font-size: 16px">Tác giả:</h5>
                   <div th:each="i : ${book.authorAndDescription}">
-                    <div><i class="bi bi-person-check"></i> [[${i}]]</div>
+                    <div style="font-size: 15px">
+                      <i class="bi bi-person-check"></i>
+                      <span style="font-weight: normal"> [[${i}]]</span>
+                    </div>
                   </div>
                   <br />
                   <form th:action="@{/cart/add-to-cart}" method="post">
@@ -86,9 +87,15 @@
                       </button>
                     </div>
                   </form>
-
                   <ul class="social-icons"></ul>
                 </div>
+                <br />
+                <br />
+              </div>
+              <br />
+              <div class="description row">
+                <h5 style="font-weight: bold">Mô tả:</h5>
+                <p style="font-size: 16px">[[${book.description}]]</p>
               </div>
             </div>
           </div>
@@ -98,12 +105,12 @@
       </div>
     </div>
     <th:block layout:fragment="script">
-    <style>
-.best-seller {
+      <style>
+        .best-seller {
           font-size: 12px;
           font-style: italic;
         }
-</style>
+      </style>
       <script type="text/javascript" th:src="@{/js/book-detail.js}"></script>
     </th:block>
   </body>

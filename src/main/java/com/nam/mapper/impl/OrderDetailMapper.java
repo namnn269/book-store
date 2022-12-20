@@ -14,6 +14,7 @@ import com.nam.mapper.IOrderDetailMapper;
 @Component
 public class OrderDetailMapper implements IOrderDetailMapper{
 
+	/* Map từ order detail entity thành order detail DTO */
 	@Override
 	public PurchasedOrderDetailDto fromOrderDetailToPurchasedBookDto(OrderDetail orderDetail) {
 		Book book = orderDetail.getBook();

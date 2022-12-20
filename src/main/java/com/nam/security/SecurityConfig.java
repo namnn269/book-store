@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.nam.exception_mesage.MyAccessDeniedHandler;
+import com.nam.security.handler.MyAccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -30,8 +30,8 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable()
 			.authorizeRequests(auth -> auth
-//					.antMatchers("/admin/**").hasAuthority("ADMIN")
-					.antMatchers("/trang-chu/**","/admin/**","/").permitAll()
+					.antMatchers("/admin/**").hasAuthority("ADMIN")
+					.antMatchers("/trang-chu/**","/").permitAll()
 					.antMatchers("/login","/access-denied","/logout","/register/**").permitAll()
 					.antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/img/**","/upload/**", "/error", "/dist/**")
 						.permitAll()
@@ -41,7 +41,7 @@ public class SecurityConfig {
 					.loginProcessingUrl("/login")
 //					.defaultSuccessUrl("/trang-chu",true)
 					.failureUrl("/login?error=true")
-					.failureHandler(null)
+//					.failureHandler(authenticationFailureHandler)
 					.passwordParameter("password")
 					.usernameParameter("username"))
 			.logout(lo->lo
@@ -58,8 +58,6 @@ public class SecurityConfig {
 					)
 			.userDetailsService(userDetailsService);
 		
-//		http.authorizeRequests().antMatchers("/**").permitAll();
-				
 		return http.build();
 	}
 	

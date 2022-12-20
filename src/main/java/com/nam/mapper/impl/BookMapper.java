@@ -36,6 +36,7 @@ public class BookMapper implements IBookMapper {
 	@Autowired
 	private IAuthorRepository authorRepo;
 	
+	/* Map từ Book entity thành BookDto để hiển thị lên màn hình trang chủ */
 	@Override
 	public DisplayBookDto fromBookToDisplayBookDto(Book book) {
 		DisplayBookDto bookDto = new DisplayBookDto();
@@ -70,6 +71,7 @@ public class BookMapper implements IBookMapper {
 		return bookDto;
 	}
 	
+	/* Map từ book trong form đăng ký thành Book entity */
 	@Override
 	public Book fromAdminBookDtoToBook(AdminBookDto bookDto) {
 		Book book = new Book();
@@ -98,6 +100,7 @@ public class BookMapper implements IBookMapper {
 		return book;
 	}
 	
+	/* Map từ book entity thành BookDTO để hiển thị lên trang admin */
 	@Override
 	public AdminBookDto fromBookToAdminDtoBook(Book book) {
 		AdminBookDto bookDto= new AdminBookDto();

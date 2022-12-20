@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,39 +22,47 @@ import com.nam.repository.IAuthorRepository;
 import com.nam.service.IAuthorService;
 
 @Service
+@PropertySource(value = "messages.properties", encoding = "utf-8")
 public class AuthorServiceImpl implements IAuthorService {
 
 	@Autowired
+	private Environment env;
+	@Autowired
 	private IAuthorRepository authorRepo;
 
+	/* Tìm kiếm thông tin tác giả theo ID */
 	@Override
 	public Optional<Author> findById(Long id) {
 		Optional<Author> author=authorRepo.findById(id);
 		if(author.isPresent()) {
 			return author;
 		} else {
-			throw new ObjectNotFoundException("Không tìm thấy tác giả");
+			throw new ObjectNotFoundException(env.getProperty("mesage.not.find.author"));
 		}
 	}
 
+	/* Lấy ra tất cả tác giả */
 	@Override
 	public List<Author> findAll() {
 		return authorRepo.findAll();
 	}
 
+	/* Thực hiện lưu hoặc update tác giả */
 	@Override
 	public Message save(Author author) {
 		authorRepo.save(author);
-		return new Message("Thành công! ID: "+author.getId());
+		return new Message(env.getProperty("message.save.success"));
 	}
 
+	/* Lấy ra tất cả tác giả theo tham số truyền vào */
 	@Override
 	public List<Author> findAll(int pageNo, int pageSize, String sortBy, String searchFor) {
 		Page<Author> page = getPageAuthor(pageNo, pageSize, sortBy, searchFor);
 		if(!page.hasContent()) return Collections.emptyList();
 		return page.getContent();
 	}
-
+	
+	/* Lấy ra page chứa list tác giả theo tham số truyền vào */
 	@Override
 	public Page<Author> getPageAuthor(int pageNo, int pageSize, String sortBy, String seachFor) {
 		int partitionIndex = sortBy.indexOf("-");
@@ -68,6 +78,7 @@ public class AuthorServiceImpl implements IAuthorService {
 		return authorRepo.findAllBySearchAndPageble(seachFor, pageable);
 	}
 
+	/* Nhận vào ID tác giả để xóa */
 	@Override
 	public Message delete(Long id) {
 		Optional<Author> opAuthor = authorRepo.findById(id);
@@ -78,9 +89,9 @@ public class AuthorServiceImpl implements IAuthorService {
 			}
 			delAuthor.setBooks(null);
 			authorRepo.delete(delAuthor);
-			return new Message("Xóa thành công! ID: " + id);
+			return new Message(env.getProperty("message.delete.success"));
 		} else {
-			throw new ObjectNotFoundException("Không tìm thấy tác giả! ID: "+id);
+			throw new ObjectNotFoundException(env.getProperty("mesage.not.find.author"));
 		}
 		
 	}

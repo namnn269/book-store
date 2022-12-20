@@ -3,6 +3,8 @@ package com.nam.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.data.domain.Page;
 
 import com.nam.dto.UserDto;
@@ -29,5 +31,11 @@ public interface IUserService {
 	UserUpdateDto getUpdateUser(Long id);
 	
 	User getCurrentLoggedInUser();
+
+	Message changePassword(String oldPassword, String newPassword1, String newPassword2);
+
+	Message sendEmailToConfirmBeforeResetPassowrd(String username, String email, HttpServletRequest http);
+
+	Message resetPassword(User user);
 
 }

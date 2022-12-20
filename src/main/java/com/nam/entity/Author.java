@@ -1,6 +1,5 @@
 package com.nam.entity;
 
-import java.sql.Date;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
@@ -34,9 +33,6 @@ public class Author {
 	@NonNull
 	@Column(name = "fullname")
 	private String fullname;
-	
-	@Column(name = "date_of_birth")
-	private Date dateOfBirth;
 	
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;

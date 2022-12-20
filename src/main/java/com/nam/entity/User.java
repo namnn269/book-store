@@ -1,5 +1,6 @@
 package com.nam.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -26,7 +27,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +41,7 @@ public class User {
 	@Column(length = 250)
 	private String username;
 
-	@Column
+	@Column 
 	private String password;
 
 	@Column(length = 200)
@@ -53,14 +56,13 @@ public class User {
 
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
 	private RegistrationToken registrationToken;
+	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	private ResetPasswordToken passwordToken;
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
 	private ProfileUser profileUser;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Collection<Order> orders = new ArrayList<>();
-	
-	@ManyToMany(mappedBy = "users",cascade = CascadeType.ALL)
-	private Collection<Discount> discounts=new ArrayList<>(); 
-
 }

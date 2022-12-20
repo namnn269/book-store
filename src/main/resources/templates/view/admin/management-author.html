@@ -24,7 +24,7 @@
                 </div>
               </div>
             </div>
-            <div class="message"></div>
+            <div id="message"></div>
             <div th:if="${message}" class="alert alert-success alert-server">
               [[${message}]]
             </div>
@@ -35,9 +35,15 @@
               <div class="col-3">
                 <label for="quantity">Số lượng hiển thị</label>
                 <select class="form-select" name="" id="quantity">
-                  <option value="3">3</option>
-                  <option value="6" selected>6</option>
-                  <option value="9">9</option>
+                  <option th:value="#{page.size.admin.1}">
+                    [[#{page.size.admin.1}]]
+                  </option>
+                  <option th:value="#{page.size.admin.2}">
+                    [[#{page.size.admin.2}]]
+                  </option>
+                  <option th:value="#{page.size.admin.3}">
+                    [[#{page.size.admin.3}]]
+                  </option>
                 </select>
               </div>
               <div class="col-3">
@@ -46,8 +52,6 @@
                   <option value="id-asc">Ngẫu nhiên</option>
                   <option value="fullname-asc">Tên tác giả (ABC)</option>
                   <option value="fullname-desc">Tên tác giả (ZYX)</option>
-                  <option value="dateOfBirth-asc">Ngày sinh (Tăng)</option>
-                  <option value="dateOfBirth-desc">Ngày sinh (Giảm)</option>
                 </select>
               </div>
               <div class="col-3">
@@ -58,11 +62,10 @@
             <table class="table table-striped table-hover" id="table">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Tên tác giả</th>
-                  <th>Ngày sinh</th>
-                  <th>Mô tả</th>
-                  <th>Action</th>
+                  <th style="width: 5%">#</th>
+                  <th style="width: 20%">Tên tác giả</th>
+                  <th style="width: 50%">Mô tả</th>
+                  <th style="width: 15%">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,6 +74,7 @@
                 <!-- row end -->
               </tbody>
             </table>
+            <button class="btn btn-danger" id="delete-many-btn">Delete</button>
             <div class="clearfix"></div>
           </div>
         </div>
@@ -94,8 +98,18 @@
       ></script>
       <script>
         $(document).ready(function () {
+          // xóa nhiều phần tử đã chọn
+          $("#delete-many-btn").click(function () {
+            let values = [];
+            $.each($("input[class='delete-many-input']:checked"), function () {
+              values.push(Number.parseInt($(this).val()));
+            });
+            if (confirm("Xóa " + values.length + " tác giả đã chọn????"))
+              values.forEach((id) => callAjaxDelele(id));
+          });
+
           // lần vào trang đầu tiên tải trang 1
-          callAjax(0, getPageSize(), getSortBy(), getSearchFor());
+          callAjax(0);
 
           $("body").on("click", ".delete", function () {
             let delId = $(this).val();
@@ -109,7 +123,7 @@
             $(".page-item").removeClass("active");
             $(this).addClass("active");
             let pageNo = Number.parseInt($(this).text() - 1);
-            callAjax(pageNo, getPageSize(), getSortBy(), getSearchFor());
+            callAjax(pageNo);
           });
 
           // lấy vị trí nút kế tiếp và gán active. nút trước bỏ
@@ -124,12 +138,7 @@
               .prev()
               .removeClass("active");
 
-            callAjax(
-              getCurrentPageIndex(),
-              getPageSize(),
-              getSortBy(),
-              getSearchFor()
-            );
+            callAjax(getCurrentPageIndex());
           });
 
           // lấy vị trí nút trước và gán 'active' nút sau bỏ
@@ -144,22 +153,17 @@
               .next()
               .removeClass("active");
 
-            callAjax(
-              getCurrentPageIndex(),
-              getPageSize(),
-              getSortBy(),
-              getSearchFor()
-            );
+            callAjax(getCurrentPageIndex());
           });
 
           // accept quantity btn
           $("body").on("click", "#quantity-btn", function () {
-            callAjax(0, getPageSize(), getSortBy(), getSearchFor());
+            callAjax(0);
           });
 
           // search category
           $("body").on("click", "#admin-search-btn", function () {
-            callAjax(0, getPageSize(), getSortBy(), getSearchFor());
+            callAjax(0);
           });
         });
 
@@ -167,14 +171,14 @@
         ////////////////////////////////////////////////////////////////////////////////////////
 
         // hàm gọi AJAX - get author
-        function callAjax(pageNo, pageSize, sortBy, searchFor) {
+        function callAjax(pageNo) {
           $.ajax({
             url: "/admin/management-author-ajax",
             data: {
               pageNo: pageNo,
-              pageSize: pageSize,
-              sortBy: sortBy,
-              searchFor: searchFor,
+              pageSize: getPageSize(),
+              sortBy: getSortBy(),
+              searchFor: getSearchFor(),
             },
             success: (value) => {
               let tbody = $("#table").find("tbody");
@@ -186,6 +190,14 @@
           });
         }
 
+        // hiển thị message
+        function showMessage(message) {
+          $(".alert-server").empty();
+          $(".alert-server").removeClass();
+          $("#message").addClass("alert alert-warning");
+          $("#message").text(message);
+        }
+
         // hàm gọi Ajax - delete category
         function callAjaxDelele(delId) {
           $.ajax({
@@ -193,17 +205,8 @@
             url: "/admin/delete-author",
             data: { id: delId },
             success: (value) => {
-              callAjax(
-                getCurrentPageIndex(),
-                getPageSize(),
-                getSortBy(),
-                getSearchFor()
-              );
-              $(".alert-server").empty();
-              $(".alert-server").removeClass();
-              $(".message").addClass("alert alert-warning");
-              $(".message").empty();
-              $(".message").append(value);
+              callAjax(getCurrentPageIndex());
+              showMessage(value);
             },
           });
         }

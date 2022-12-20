@@ -8,8 +8,6 @@ import com.nam.entity.User;
 import com.nam.exception_mesage.Message;
 
 public interface IOrderService {
-	List<Order> findAllByUser(User user);
-
 	void addToCart(Long id, Long quantity);
 
 	Order findCurrentOrder(User user);

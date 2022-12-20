@@ -29,6 +29,7 @@ public class AdminAuthorController {
 	@Autowired
 	private IAuthorService authorService;
 	
+	/* Hiển thị trang admin thông tin của các tác giả */
 	@GetMapping("/management-author")
 	public String managementAuthor(Model model, @ModelAttribute("message") String message,
 			@ModelAttribute("error") String error) {
@@ -37,12 +38,14 @@ public class AdminAuthorController {
 		return "view/admin/management-author";
 	}
 
+	/* Hiển thị form để thêm tác giả */
 	@GetMapping(value = "/new-author")
 	public String showFormNewAuthor(Model model) {
 		model.addAttribute("author", new Author());
 		return "view/admin/form-add-new-author";
 	}
 
+	/* Gọi service để thêm hoặc cập nhật tác giả */
 	@PostMapping(value = "/save-author")
 	public ModelAndView addnewAuthor(@ModelAttribute Author author, RedirectAttributes ra) {
 		ModelAndView mav = new ModelAndView();
@@ -51,12 +54,13 @@ public class AdminAuthorController {
 			ra.addFlashAttribute("message",message.getContent());
 			mav.setViewName("redirect:/admin/management-author");
 		} catch (Exception e) {
-			mav = new ModelAndView("signin-up/common-error");
+			mav = new ModelAndView("view/error/common-error");
 			mav.addObject("errorMsg", new ErrorMsgDto("Cannot save!"));
 		}
 		return mav;
 	}
 
+	/* Lấy tác giả theo ID để binding vào form update tác giả */
 	@GetMapping("/update-author/{id}")
 	public ModelAndView showFormUpdate(@PathVariable("id") Long id) {
 		ModelAndView mav=new ModelAndView();
@@ -70,6 +74,7 @@ public class AdminAuthorController {
 		return mav;
 	}
 	
+	/* Lấy ID của tác giả, gọi service để xóa */
 	@GetMapping(value = "/delete-author", produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public String deleteAuthor(@RequestParam("id") Long id,RedirectAttributes ra) {
@@ -83,7 +88,9 @@ public class AdminAuthorController {
 		return message.getContent();
 	}
 	
-
+	/* Trả về 1 mảng HTML
+	 * Phần tử 1 chứa HTML thông tin tác giả
+	 * Phẩn tử 2 chứa HTML chứa thông tin pagination */
 	@GetMapping(value = "/management-author-ajax")
 	@ResponseBody
 	public String[] callAuthorAjax(	@RequestParam(defaultValue = "0") int pageNo,
@@ -95,19 +102,10 @@ public class AdminAuthorController {
 		String html="";
 		for(Author author: authors) {
 			html += "<tr>"
-					+ "                    <td>"+(pageNo*pageSize+i)+"</td>"
-					+ "                    <td>"
-					+ "                      <a href='#'"
-					+ "                        ><img"
-					+ "                          style='width: 20px'"
-					+ "                          src='https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg'"
-					+ "                          class='avatar'"
-					+ "                          alt='Avatar'"
-					+ "                        />"
-					+ "                        "+author.getFullname()+"</a"
-					+ "                      >"
-					+ "                    </td>"
-					+ "                    <td>"+author.getDateOfBirth()+"</td>"
+					+ "                    <td>" + (pageNo * pageSize + i) + " &nbsp; "
+					+ "						  <input class='delete-many-input' type='checkbox' value='"+author.getId()+"' />"
+					+ "					   </td>"
+					+ "                    <td style='font-weight:bold;'>"+ author.getFullname() +"</td>"
 					+ "                    <td>"+author.getDescription()+"</td>"
 					+ "                    <td>"
 					+ "                      <a"
@@ -132,7 +130,7 @@ public class AdminAuthorController {
 		return new String[] {html, paginationHtml};
 	}
 	
-	
+	/* Trả về HTML chứa thông tin pagination tác giả */
 	private  String getPaginationString(int pageNo, int pageSize, String sortBy, String searchFor) {
 		Page<Author> authorPage = authorService.getPageAuthor(pageNo, pageSize, sortBy, searchFor);
 		String html =			"<div class='hint-text'>"

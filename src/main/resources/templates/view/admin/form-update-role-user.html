@@ -11,7 +11,7 @@
 
       <div class="container">
         <hr />
-        <div class="bg-light">
+        <div class="bg-light" style="height: 100vh">
           <article class="card-body mx-auto" style="max-width: 800px">
             <h4 class="card-title mt-3 text-center">
               Update Account in Admin System
@@ -22,7 +22,6 @@
               th:object="${user}"
               method="post"
             >
-              th:onsubmit="return checkFormSignUp()"
               <input type="hidden" th:field="*{id}" />
               <!-- user name -->
               <h5>Username</h5>
@@ -81,7 +80,7 @@
                   ></option>
                 </select>
               </div>
-
+              <br />
               <div
                 th:if="${errorMsg}"
                 th:class="alert-danger"

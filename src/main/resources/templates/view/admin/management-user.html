@@ -24,7 +24,7 @@
                 </div>
               </div>
             </div>
-            <div class="message"></div>
+            <div id="message"></div>
             <div th:if="${message}" class="alert alert-success alert-server">
               [[${message}]]
             </div>
@@ -35,9 +35,15 @@
               <div class="col-2">
                 <label for="quantity">Số sản phẩm/trang</label>
                 <select class="form-select border" name="" id="quantity">
-                  <option value="3">3</option>
-                  <option value="6">6</option>
-                  <option value="9">9</option>
+                  <option th:value="#{page.size.admin.1}">
+                    [[#{page.size.admin.1}]]
+                  </option>
+                  <option th:value="#{page.size.admin.2}">
+                    [[#{page.size.admin.2}]]
+                  </option>
+                  <option th:value="#{page.size.admin.3}">
+                    [[#{page.size.admin.3}]]
+                  </option>
                 </select>
               </div>
               <div class="col-2">
@@ -82,6 +88,7 @@
                 <!-- tr end -->
               </tbody>
             </table>
+            <button class="btn btn-danger" id="delete-many-btn">Delete</button>
             <div class="clearfix"></div>
           </div>
         </div>
@@ -111,6 +118,16 @@
 
       <script>
         $(document).ready(function () {
+          // xóa nhiều phần tử đã chọn
+          $("#delete-many-btn").click(function () {
+            let values = [];
+            $.each($("input[class='delete-many-input']:checked"), function () {
+              values.push(Number.parseInt($(this).val()));
+            });
+            if (confirm("Xóa " + values.length + " người dùng đã chọn??"))
+              values.forEach((id) => callAjaxDelele(id));
+          });
+
           // lần vào trang đầu tiên tải trang 1
           callAjax(0);
 
@@ -207,9 +224,9 @@
               callAjax(getCurrentPageIndex());
               $(".alert-server").empty();
               $(".alert-server").removeClass();
-              $(".message").addClass("alert alert-warning");
-              $(".message").empty();
-              $(".message").append(value);
+              $("#message").addClass("alert alert-warning");
+              $("#message").empty();
+              $("#message").append(value);
             },
           });
         }

@@ -3,6 +3,8 @@ package com.nam.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.nam.dto.ProfileUserDto;
@@ -16,6 +18,7 @@ import com.nam.service.IProfileService;
 import com.nam.service.IUserService;
 
 @Service
+@PropertySource(value = "messages.properties", encoding = "utf-8")
 public class ProfileServiceImpl implements IProfileService {
 
 	@Autowired
@@ -24,8 +27,10 @@ public class ProfileServiceImpl implements IProfileService {
 	IProfileMapper profileMapper;
 	@Autowired
 	private IProfileRepository profileRepo;
+	@Autowired
+	private Environment env;
 
-	// update or add profile
+	/* Thực hiện lưu profile của người dùng */
 	@Override
 	public Message save(ProfileUser profileUser) {
 		User user = userService.getCurrentLoggedInUser();
@@ -33,16 +38,16 @@ public class ProfileServiceImpl implements IProfileService {
 			Long.parseLong(profileUser.getPhoneNumber());
 			int phoneNumberLength = profileUser.getPhoneNumber().length();
 			if (phoneNumberLength < 9 || phoneNumberLength > 11)
-				throw new ValidFormException("SĐT không hợp lệ");
+				throw new ValidFormException(env.getProperty("message.invalid.phone"));
 		} catch (Exception e) {
-			throw new ValidFormException("SĐT không hợp lệ");
+			throw new ValidFormException(env.getProperty("message.invalid.phone"));
 		}
 		profileUser.setUser(user);
 		profileRepo.save(profileUser);
-		return new Message("Update successfully");
+		return new Message(env.getProperty("message.update.phone.success"));
 	}
 
-	// get profile user
+	/* Lấy ra profile của người dùng đang đăng nhập */
 	@Override
 	public ProfileUser getProfile() {
 		User user = userService.getCurrentLoggedInUser();
@@ -55,7 +60,7 @@ public class ProfileServiceImpl implements IProfileService {
 		return profile;
 	}
 
-	// show info user
+	/* Lấy ra profile DTO của người dùng đang đăng nhập */
 	@Override
 	public ProfileUserDto getProfileDto() {
 		User user = userService.getCurrentLoggedInUser();

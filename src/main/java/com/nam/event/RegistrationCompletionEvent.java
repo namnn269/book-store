@@ -1,4 +1,4 @@
-package com.nam.registration;
+package com.nam.event;
 
 import java.util.Locale;
 

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,30 +22,38 @@ import com.nam.service.ICategoryService;
 import java.util.Collections;
 
 @Service
+@PropertySource(value = "messages.properties", encoding = "utf-8")
 public class CategoryServiceImpl implements ICategoryService {
 	@Autowired
 	private ICategoryRepository categoryRepo;
+	
+	@Autowired
+	private Environment env;
 
+	/* Lấy thể loại từ ID */
 	@Override
 	public Optional<Category> findById(Long id) {
 		return categoryRepo.findById(id);
 	}
 
+	/* Lấy danh sách tất cả thể loại */
 	@Override
 	public List<Category> findAll() {
 		return categoryRepo.findAll();
 	}
 
+	/* Nhận vào category để thực hiện lưu */
 	@Override
 	public Message save(Category category) {
 		Category checkCategory = categoryRepo.findByCategoryTitle(category.getCategoryTitle());
 
 		if (checkCategory != null)
-			throw new ObjectAlreadyExistedException("Tên thể loại đã tồn tại");
+			throw new ObjectAlreadyExistedException(env.getProperty("message.existed.category"));
 		categoryRepo.save(category);
-		return new Message("Thành công! ID: "+category.getId());
+		return new Message(env.getProperty("message.save.success"));
 	}
 
+	/* Lấy ra list thể loại dựa vào tham số truyền vào */
 	@Override
 	public List<Category> findAll(int pageNo, int pageSize, String sortBy, String seachFor) {
 		Page<Category> page = getPageCategory(pageNo, pageSize, sortBy, seachFor);
@@ -52,6 +62,7 @@ public class CategoryServiceImpl implements ICategoryService {
 		return page.getContent();
 	} 
 
+	/* Lấy ra page thể loại dựa vào tham số truyền vào */
 	@Override
 	public Page<Category> getPageCategory(int pageNo, int pageSize, String sortBy, String searchFor) {
 		
@@ -67,14 +78,15 @@ public class CategoryServiceImpl implements ICategoryService {
 		return pageCategory;
 	}
 
+	/* Nhận vào id thể loại để xóa */
 	@Override
 	public Message delete(Long id) {
 		Optional<Category> delCategory=categoryRepo.findById(id);
 		if(delCategory.isPresent()) {
 			categoryRepo.delete(delCategory.get());
-			return new Message("Xóa thể loại thành công! ID: "+id);
+			return new Message(env.getProperty("message.delete.category.success"));
 		} else {
-			throw new ObjectNotFoundException("Không tìm thấy thể loại");
+			throw new ObjectNotFoundException(env.getProperty("message.existed.category"));
 		}
 	}
 

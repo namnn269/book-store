@@ -31,22 +31,23 @@ public class AdminCategoryController {
 	@Autowired
 	private ICategoryService categoryService;
 
+	/* Hiển thị trang quản lý thể loại admin */
 	@GetMapping("/management-category")
 	public String categoryManagement(Model model, @ModelAttribute("message") String message,
 									@ModelAttribute("error") String error) {
-		model.addAttribute("message", message.equals("")?null:message);
-		model.addAttribute("error", error.equals("")?null:error);
+		model.addAttribute("message", message.equals("") ? null : message);
+		model.addAttribute("error", error.equals("") ? null : error);
 		return "view/admin/management-category";
 	}
 
-	// creating form 
+	/* Hiển thị form để thêm mới 1 thể loại */
 	@GetMapping(value = "/new-category")
 	public String showCategoryForm(Model model) {
 			model.addAttribute("category", new Category());
 		return "view/admin/form-add-new-category";
 	}
 	
-	// editing form
+	/* Hiển thị form để update lại thể loại */
 	@GetMapping("/update-category/{id}")
 	public ModelAndView showEditCategory(@PathVariable("id") Long id) {
 		Optional<Category> category=categoryService.findById(id);
@@ -60,7 +61,7 @@ public class AdminCategoryController {
 		return mav;
 	}
 	
-	// handle create and editing form
+	/* Gọi service để lưu 1 thể loại mới hoặc cập nhật lại 1 thể lại đã có */
 	@PostMapping(value = "/save-category")
 	public ModelAndView addNewCategory(@ModelAttribute Category category, RedirectAttributes ra) {
 		ModelAndView mav = new ModelAndView();
@@ -79,7 +80,7 @@ public class AdminCategoryController {
 		return mav;
 	}
 	
-	// handle delete category
+	/* Nhận vào ID của thể loại để xóa */
 	@GetMapping(value = "/delete-category", produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public String deleteCategory(@RequestParam("id") Long id) {
@@ -92,7 +93,9 @@ public class AdminCategoryController {
 		return message.getContent();
 	}
 	
-	// providing list category by ajax
+	/* Trả về 1 mảng HTML
+	 * Phần tử 1 chứa HTML thông tin các thể loại
+	 * Phẩn tử 2 chứa HTML chứa thông tin pagination */
 	@GetMapping(value = "/management-category-ajax")
 	@ResponseBody
 	public String[] callCategoryAjax(	@RequestParam(defaultValue = "0") int pageNo,
@@ -104,14 +107,15 @@ public class AdminCategoryController {
 		int i = 1;
 		for (Category category : list) {
 			html += " <tr>"
-					+ "                    <td>" + (pageNo * pageSize + i) + "</td>"
+					+ "                    <td>" + (pageNo * pageSize + i) + " &nbsp; "
+					+ "						  <input class='delete-many-input' type='checkbox' value='"+category.getId()+"' />"
+					+ "					   </td>"
 					+ "                    <td>"
 					+ "                      <a href='#'"
 					+ "                        ><img"
 					+ "                          style='width: 20px'"
-					+ "                          src='https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg'"
-					+ "                          class='avatar'"
-					+ "                          alt='Avatar'"
+					+ "                          src='http://cdn.onlinewebfonts.com/svg/img_318548.png'"
+					+ "                          alt='"+category.getCategoryTitle()+"'"
 					+ "                        />"
 					+ "                        " + category.getCategoryTitle() + "</a"
 					+ "                      >"
@@ -140,6 +144,7 @@ public class AdminCategoryController {
 		return new String[] { html, htmlPagination};
 	}
 
+	/* Trả về HTML chứa thông tin pagination thể loại */
 	private  String getPaginationString(int pageNo, int pageSize, String sortBy, String searchFor) {
 		Page<Category> categoryPage = categoryService.getPageCategory(pageNo, pageSize, sortBy, searchFor);
 		String html =			"<div class='hint-text'>"

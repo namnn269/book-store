@@ -16,6 +16,7 @@ public class ProfileMapper implements IProfileMapper {
 	@Autowired
 	private IProfileRepository profileRepo;
 
+	/* Map từ user thành profile DTO */
 	@Override
 	public ProfileUserDto fromUserToProfileDto(User user) {
 		ProfileUserDto profileUserDto = new ProfileUserDto();
@@ -27,9 +28,11 @@ public class ProfileMapper implements IProfileMapper {
 			profileUser = new ProfileUser();
 		else
 			profileUser = opProfile.get(0);
+		
 		profileUserDto.setUsername(user.getUsername());
 		profileUserDto.setEmail(user.getEmail());
 		profileUserDto.setFullName(user.getFullName());
+		
 		if (profileUser != null) {
 			profileUserDto.setGender(profileUser.getGender());
 			profileUserDto.setAddress(profileUser.getAddress());

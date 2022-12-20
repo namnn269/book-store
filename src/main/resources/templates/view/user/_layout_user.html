@@ -115,12 +115,15 @@
           </div>
           <div class="top-cart-content-wrapper">
             <div class="top-cart-content">
-              <ul class="scroller" style="height: 250px"></ul>
+              <ul
+                class="scroller"
+                style="height: 250px; overflow: visible"
+              ></ul>
               <div class="text-right">
                 <a th:href="@{/cart/shopping-cart}" class="btn btn-default"
                   >View Cart</a
                 >
-                <a href="shop-checkout.html" class="btn btn-primary"
+                <a th:href="@{/cart/check-out}" class="btn btn-primary"
                   >Checkout</a
                 >
               </div>
@@ -198,7 +201,7 @@
             <h2>Our Contacts</h2>
             <address class="margin-bottom-40">
               01, phố 01, Hà Nội, Việt Nam<br />
-              Phone: 0123456789<br />
+              Phone: 033 327 3003<br />
               Fax: 0123456789<br />
               Email: <a href="">namnnFX18309@funix.edu.vn</a><br />
             </address>

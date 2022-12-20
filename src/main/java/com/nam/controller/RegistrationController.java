@@ -20,9 +20,9 @@ import com.nam.dto.ErrorMsgDto;
 import com.nam.dto.UserRegistrationFormDto;
 import com.nam.entity.RegistrationToken;
 import com.nam.entity.User;
+import com.nam.event.RegistrationCompletionEvent;
 import com.nam.exception_mesage.ObjectAlreadyExistedException;
 import com.nam.exception_mesage.ValidFormException;
-import com.nam.registration.RegistrationCompletionEvent;
 import com.nam.repository.IRegistraionTokenRepository;
 import com.nam.service.IUserService;
 import com.nam.utils.UrlFromUser;
@@ -38,12 +38,14 @@ public class RegistrationController {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 
+	/* Hiển thị form đăng ký người dùng */
 	@GetMapping("/form")
 	public String showRegistrationForm(Model model) {
 		model.addAttribute("user", new UserRegistrationFormDto());
 		return "signin-up/signupform";
 	}
 
+	/* Nhận vào thông tin đăng ký và thực hiện lưu người dùng */
 	@PostMapping("/save")
 	public ModelAndView registerNewUser(@ModelAttribute UserRegistrationFormDto userRegDto, HttpServletRequest http) {
 		ModelAndView mav = new ModelAndView();
@@ -58,17 +60,19 @@ public class RegistrationController {
 			mav.addObject("user", userRegDto);
 			mav.addObject("errorMsg", msg);
 		} catch (Exception e) {
-			mav = new ModelAndView("signin-up/common-error");
+			mav = new ModelAndView("view/error/common-error");
 			mav.addObject("errorMsg", new ErrorMsgDto("Cannot save!"));
 		}
 		return mav;
 	}
-
+	
+	/* Nhận vào chuỗi token từ đường link có trong email để xác thực người dùng */
 	@GetMapping(value = "/email-confirm")
 	public String handleConfirmationEmailToken(@RequestParam("token") String tokenStr, HttpServletRequest http,
 			Model model) {
 		RegistrationToken token = tokenRepo.findByToken(tokenStr);
-		if (token == null) // mã token sai
+		// mã token sai
+		if (token == null) 
 			return "signin-up/error-token";
 
 		if (token.getExpirationDate().after(new Timestamp(Calendar.getInstance().getTimeInMillis()))) {
@@ -76,8 +80,9 @@ public class RegistrationController {
 			user.setEnabled(true);
 			tokenRepo.save(token);
 			return "signin-up/success";
-		} else {
-			// token đã quá hạn
+		} 
+		// token đã quá hạn
+		else {
 			String url = UrlFromUser.getUrl(http) + "/register/expiration-token" + "?token=" + token.getToken();
 			model.addAttribute("url", url);
 			return "signin-up/expired-email-token";
@@ -85,14 +90,27 @@ public class RegistrationController {
 
 	}
 
+	/* Nếu token bị quá hạn thì phương thức này sẽ thực hiện gửi lại email để xác thực lại */
 	@GetMapping(value = "/expiration-token")
 	public String handleExpiredToken(@RequestParam("token") String tokenStr, HttpServletRequest http) {
 		RegistrationToken token = tokenRepo.findByToken(tokenStr);
-		if (token == null) // mã token sai
-			return "error-token";
+		// mã token sai
+		if (token == null) 
+			return "signin-up/error-token";
 		String url = UrlFromUser.getUrl(http);
 		token.resetToken();
 		publisher.publishEvent(new RegistrationCompletionEvent(token.getUser(), http.getLocale(), url));
 		return "signin-up/loginform";
 	}
 }
+
+
+
+
+
+
+
+
+
+
+

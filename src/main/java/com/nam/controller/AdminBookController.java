@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +38,7 @@ import com.nam.service.ICategoryService;
 
 @Controller
 @ControllerAdvice
+@PropertySource(value = "messages.properties", encoding = "utf-8")
 @RequestMapping("/admin")
 public class AdminBookController {
 
@@ -48,9 +51,13 @@ public class AdminBookController {
 	@Autowired 
 	IAuthorService authorService;
 	
+	@Autowired
+	private Environment env;
+	
 	@Value("${spring.servlet.multipart.max-file-size}")
 	private String maxSizeFileUpload;
 	
+	/* Trả về màn hình quản lý sách */
 	@GetMapping(value = "/management-book")
 	public String bookManagement(Model model, @ModelAttribute("message") String message,
 								@ModelAttribute("error") String error) {
@@ -61,6 +68,7 @@ public class AdminBookController {
 		return "view/admin/management-book";
 	}
 
+	/* Trả về form để thêm mới 1 cuốn sách */
 	@GetMapping("/new-book")
 	public String showFormNewBook(Model model) {
 		AdminBookDto book = new AdminBookDto();
@@ -72,6 +80,7 @@ public class AdminBookController {
 		return "view/admin/form-add-new-book";
 	}
 
+	/* Thực hiện gọi service để thêm mới hoặc cập nhật lại một quyển sách nếu sách đã có ID */
 	@PostMapping("/add-new-book")
 	public ModelAndView  addNewBook(	@ModelAttribute AdminBookDto bookDto, 
 										@RequestParam(value = "img_upload")MultipartFile multiFile, 
@@ -94,13 +103,14 @@ public class AdminBookController {
 		} catch (IOException io) {
 			mav.addObject("errorMsg", new ErrorMsgDto(io.getMessage()));
 		} catch (Exception e) {
-			mav = new ModelAndView("signin-up/common-error");
+			mav = new ModelAndView("view/error/common-error");
 			mav.addObject("errorMsg", new ErrorMsgDto("Cannot save!"));
 		}
 		return mav;
 	}
 	
 
+	/* Nhận vào ID 1 cuốn sách và gọi service để xóa */
 	@GetMapping(value = "/delete-book", produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public String deleteBook(@RequestParam("id") Long id) {
@@ -111,11 +121,12 @@ public class AdminBookController {
 		} catch (ObjectNotFoundException o) {
 			message=new Message(o.getMessage());
 		}catch (Exception e) {
-			message=new Message("Lỗi không xác định");
+			message=new Message(env.getProperty("message.common.undefined.error"));
 		}
 		return message.getContent();
 	}
 
+	/* Hiển thị form có chứa thông tin sách để cập nhật sách */
 	@GetMapping(value = "/update-book/{id}")
 	public ModelAndView updateBook(@PathVariable("id") Long id, RedirectAttributes ra) {
 		ModelAndView mav = new ModelAndView();
@@ -136,12 +147,16 @@ public class AdminBookController {
 		return mav;
 	}
 	
+	/* Khi upload ảnh của sách từ máy, nếu xảy ra lỗi vượt quá dung lượng ảnh 5MB cho phép thì xử lý lỗi */
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public String handleFileuploadError(RedirectAttributes ra) {
-		ra.addFlashAttribute("error", "Ảnh vượt quá " + maxSizeFileUpload);
+		ra.addFlashAttribute("error", env.getProperty("message.img.over") + maxSizeFileUpload);
 		return "redirect:/admin/management-book";
 	}
 	
+	/* Trả về 1 mảng HTML
+	 * Phần tử 1 chứa HTML thông tin các quyển sách
+	 * Phẩn tử 2 chứa HTML chứa thông tin pagination */
 	@GetMapping(value = "/management-book-ajax")
 	@ResponseBody
 	public String[] callBookAjax(	@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
@@ -151,23 +166,28 @@ public class AdminBookController {
 									@RequestParam(value = "sortbyPrice", defaultValue = "") String sortByPrice) {
 		
 		List<DisplayBookDto> books=bookService.findAll(pageNo, pageSize, searchFor, categoryId, sortByPrice);
-		int i=1;
-		String html=""; 
+		int i = 1;
+		String html = "";
 		for(DisplayBookDto book: books) {
+			String bookDes = book.getDescription()==null?"":book.getDescription();
+			
+			if (bookDes.length() > 100)
+				bookDes = bookDes.substring(0, 100) + "...";
 			html += "<tr>\r\n"
-					+ "                  <td>" + (pageNo * pageSize + i) + "</td>"
+					+ "                    <td>" + (pageNo * pageSize + i) + " &nbsp; "
+					+ "						  <input class='delete-many-input' type='checkbox' value='"+book.getId()+"' />"
+					+ "					   </td>"
 					+ "                  <td>"
-					+ "                    <a href='#'"
+					+ "                    <a href='"+book.getImgLink()+"'"
 					+ "                      ><img"
-					+ "                        style='width: 20px'"
-					+ "                        src='https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg'"
-					+ "                        class='avatar'"
-					+ "                        alt='Avatar'" 
-					+ "                      />"
+					+ "                        style='height: " + env.getProperty("default.height.book.img.admin") + "'"
+					+ "                        src='" + book.getImgLink() + "'"
+					+ "                        alt='" + book.getBookTitle() + "'" 
+					+ "                      /> <br>"
 					+ "                     "+book.getBookTitle()+"</a"
 					+ "                    >"
 					+ "                  </td>"
-					+ "                  <td>"+book.getDescription()+"</td>"
+					+ "                  <td>"+bookDes+"</td>"
 					+ "                  <td>"+book.getCategory()+"</td>"
 					+ "                  <td>"+book.getAuthors()+"</td>"
 					+ "                  <td>"+book.getAmountInStock()+"</td>"
@@ -197,6 +217,7 @@ public class AdminBookController {
 		return new String[] {html, getPaginationString(pageNo, pageSize, searchFor, categoryId, sortByPrice)};
 	}
 	
+	/* Trả về HTML chứa thông tin pagination sách */
 	private  String getPaginationString(int pageNo, int pageSize, String searchFor, long categoryId, String sortByPrice) {
 		Page<Book> bookPage = bookService.getPageBook(pageNo, pageSize, searchFor, categoryId, sortByPrice);
 		String html =			"<div class='hint-text'>"

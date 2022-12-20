@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 public class AdminOrderDto {
 	private Long id;
 	
+	private double totalMoney;
+	
 	private UserDto buyer;
 	
 	private Collection<PurchasedOrderDetailDto> bookDtos;

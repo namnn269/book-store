@@ -24,8 +24,8 @@
               th:action="@{/admin/save-author}"
               method="post"
               th:object="${author}"
+              th:onsubmit="return checkFormNewAuthor()"
             >
-              th:onsubmit="return checkFormNewBook()"
               <th:block th:if="*{id}!=null">
                 <input type="hidden" th:field="*{id}" />
               </th:block>
@@ -45,21 +45,7 @@
                   required="required"
                 />
               </div>
-              <!-- author birthday -->
-              <h5>Ngày sinh</h5>
-              <div class="form-group input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">
-                    <i class="fa fa-user"></i>
-                  </span>
-                </div>
-                <input
-                  th:field="*{dateOfBirth}"
-                  class="form-control"
-                  placeholder="Ngày sinh"
-                  type="date"
-                />
-              </div>
+
               <!-- author description -->
               <h5>Mô tả</h5>
               <div class="form-group input-group">
@@ -72,7 +58,6 @@
                   th:field="*{description}"
                   class="form-control"
                   placeholder="Mô tả ngắn"
-                  required="required"
                 ></textarea>
               </div>
 

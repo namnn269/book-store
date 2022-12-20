@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,53 +26,48 @@ import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.OrderFailureException;
 import com.nam.exception_mesage.OverQuantityException;
 import com.nam.mapper.impl.BookMapper;
-import com.nam.service.IBookService;
 import com.nam.service.IOrderService;
 import com.nam.service.IProfileService;
 import com.nam.service.IUserService;
 
 @Controller
+@PropertySource(value = "messages.properties", encoding = "utf-8")
 @RequestMapping(value = "/cart")
 public class OrderController {
 	
 	@Autowired
 	private IOrderService orderService;
-	
 	@Autowired
 	private IUserService userService;
-	
-	@Autowired
-	private IBookService bookService;
-	
 	@Autowired
 	private IProfileService profileService;
+	@Autowired
+	private Environment env;
 	
 	@Autowired
 	private BookMapper mapperBook;
 	
+	/* Nhận vào ID sách và số lượng để thêm vào giỏ hàng người dùng hiện tại */
 	@PostMapping(value = "/add-to-cart")
 	public ModelAndView addToCart(  @RequestParam(value = "id") Long id, 
-							@RequestParam(value = "quantity") Long quantity) {
-		ModelAndView mav=new ModelAndView("view/user/book-detail");
-		DisplayBookDto bookDto = bookService.findBookDetailById(id);
-		mav.addObject("book", bookDto);
+									@RequestParam(value = "quantity") Long quantity,
+									RedirectAttributes ra) {
+		ModelAndView mav = new ModelAndView("redirect:/trang-chu/book-detail/" + id);
 		try {
 			orderService.addToCart(id,quantity);
-			mav.addObject("message","Thêm sản phẩm thành công!");
-			mav.addObject("username",userService.getCurrentLoggedInUser().getUsername());
+			ra.addFlashAttribute("msg",env.getProperty("message.add.to.cart.success"));
 		} catch (OverQuantityException e) {
-			mav.addObject("username",userService.getCurrentLoggedInUser().getUsername());
-			mav.addObject("error","Số lượng sản phẩm vượt quá số lượng hiện có!");
+			mav.addObject("error",e.getMessage());
 		} catch (Exception e) {
 			
 		}
 		return mav;
 	}
 	
-	
+	/* Nhận vào ID book để thay đổi số lượng sách có trong giỏ hàng */
 	@PostMapping(value = "/change-amount-in-cart")
 	@ResponseBody
-	public void changeAmountInCart(@RequestParam("increase") boolean increase,
+	public void changeAmountInCart(	@RequestParam("increase") boolean increase,
 									@RequestParam("id") Long id) {
 		try {
 			orderService.changeAmountInOrderDetail(increase,id);
@@ -80,6 +77,7 @@ public class OrderController {
 
 	}
 	
+	/* Lấy ID order detail để xóa order detail trong giở hàng hiện tại */
 	@PostMapping(value = "/delete-order-detail-incart")
 	@ResponseBody
 	public void deleteOrderDetail(@RequestParam("id") Long id) {
@@ -90,6 +88,7 @@ public class OrderController {
 		}
 	}
 	
+	/* Hiển thị thông tin giỏ hàng hiện tại của user */
 	@GetMapping(value = "/shopping-cart")
 	public ModelAndView showShoppingCart() {
 		ModelAndView mav = new ModelAndView("view/user/shopping-cart");
@@ -109,6 +108,7 @@ public class OrderController {
 		return mav;
 	}
 	
+	/* Hiển thị trang check-out để thực hiện mua */
 	@GetMapping(value = "/check-out")
 	public ModelAndView showFormCheckOut() {
 		ModelAndView mav = new ModelAndView("view/user/check-out");
@@ -135,6 +135,7 @@ public class OrderController {
 		return mav;
 	} 
 	
+	/* Thực hiện submit để mua order hiện tại */
 	@GetMapping(value = "/complete-payment")
 	public ModelAndView completePayment(RedirectAttributes ra) {
 		ModelAndView mav = new ModelAndView("redirect:/trang-chu");
@@ -148,7 +149,7 @@ public class OrderController {
 		return mav;
 	}
 	
-
+	/* Trả về chuỗi HTML order hiện tại khi hover vào cart icon sẽ hiển thị order hiện tại của người dùng */
 	@GetMapping(value = "/hover-cart-ajax", produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public String getPopUpCart() {
@@ -169,8 +170,8 @@ public class OrderController {
 	              "                      height='27'" +
 	              "                  </a>" +
 	              "                  <span class='cart-content-count'>x "+orderDetail.getAmount()+"</span>" +
-	              "                  <strong><a href='trang-chu/book-detail/"+book.getId()+"'>"+book.getBookTitle()+"</a></strong>" +
-	              "                  <em>$"+book.getPrice()*orderDetail.getAmount()+"</em>" +
+	              "                  <strong><a href='/trang-chu/book-detail/"+book.getId()+"'>"+book.getBookTitle()+"</a></strong>" +
+	              "                  <p style='color:red; font-weight:bold'>"+book.getPrice()*orderDetail.getAmount()+" đ</p>" +
 	              "                </li>";
 			builder.append(html);
 		}

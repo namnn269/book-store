@@ -22,11 +22,8 @@
                         <th class="goods-page-image" style="width: 10%">
                           Hình ảnh
                         </th>
-                        <th class="goods-page-description" style="width: 20%">
+                        <th class="goods-page-description" style="width: 30%">
                           Tên sách
-                        </th>
-                        <th class="goods-page-description" style="width: 20%">
-                          Mô tả
                         </th>
                         <th class="goods-page-ref-no" style="width: 20%">
                           Tác giả
@@ -49,13 +46,10 @@
                                 alt="${book.bookTitle}"
                             /></a>
                           </td>
-                          <td class="goods-page-ref-no" style="font-size: 20px">
+                          <td class="goods-page-ref-no" style="font-size: 18px">
                             [[${book.bookTitle}]]
                           </td>
-                          <td class="goods-page-description">
-                            <h5>[[${book.description}]]</h5>
-                          </td>
-                          <td class="goods-page-ref-no">
+                          <td class="goods-page-ref-no" style="font-size: 16px">
                             <th:block th:each="author : ${book.authors}">
                               <div style="text-align: left">
                                 -- [[${author}]]
@@ -98,7 +92,7 @@
                             </div>
                           </td>
                           <td class="goods-page-price">
-                            <strong><span>$</span>[[${book.price}]]</strong>
+                            <strong>[[${book.price}]]<span>đ</span></strong>
                           </td>
 
                           <td>

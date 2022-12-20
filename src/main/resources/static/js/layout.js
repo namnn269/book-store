@@ -1,12 +1,9 @@
 $(document).ready(function () {
-	
   // khi hover cart
   $(".top-cart-info").hover(function () {
     cartHoverhAjax();
   });
-})
-
-
+});
 
 // function ajax khi hover
 function cartHoverhAjax() {
@@ -20,30 +17,30 @@ function cartHoverhAjax() {
   });
 }
 
- // let working = false;
-      // let x = 3;
+// let working = false;
+// let x = 3;
 
-      // $(document).ready(function () {
-      // khi cuộn trang
-      // $(window).scroll(function () {
-      //   if (
-      //     $(this).scrollTop() + 300 >
-      //     $("body").height() - $(window).height()
-      //   ) {
-      //     callAjax(x, 1, "id");
-      //     x++;
-      //   }
-      // });
-      // });
+// $(document).ready(function () {
+// khi cuộn trang
+// $(window).scroll(function () {
+//   if (
+//     $(this).scrollTop() + 300 >
+//     $("body").height() - $(window).height()
+//   ) {
+//     callAjax(x, 1, "id");
+//     x++;
+//   }
+// });
+// });
 
-      // function ajax khi cuộn
-      // function callAjax(pageNo, pageSize, sortBy) {
-      //   $.ajax({
-      //     type: "get",
-      //     url: "/trang-chu/product-home-ajax",
-      //     data: { pageNo: pageNo, pageSize: pageSize, sortBy: sortBy },
-      //     success: function (value) {
-      //       $("#product-list").append(value);
-      //     },
-      //   });
-      // }
+// function ajax khi cuộn
+// function callAjax(pageNo, pageSize, sortBy) {
+//   $.ajax({
+//     type: "get",
+//     url: "/trang-chu/product-home-ajax",
+//     data: { pageNo: pageNo, pageSize: pageSize, sortBy: sortBy },
+//     success: function (value) {
+//       $("#product-list").append(value);
+//     },
+//   });
+// }

@@ -26,10 +26,10 @@
               <div class="col-md-1">STT</div>
               <div class="col-md-8">
                 <div class="row">
-                  <div class="col-md-3 goods-page-image">Hình ảnh</div>
-                  <div class="col-md-3">Tên sách</div>
+                  <div class="col-md-2">Hình ảnh</div>
+                  <div class="col-md-5">Tên sách</div>
                   <div class="col-md-2">Số lượng</div>
-                  <div class="col-md-3">Giá</div>
+                  <div class="col-md-2">Giá</div>
                 </div>
               </div>
               <div class="col-md-2">Người mua</div>
@@ -45,7 +45,7 @@
                 <div class="col-md-8">
                   <th:block th:each=" book : ${order.bookDtos}">
                     <div class="row">
-                      <div class="col-md-3">
+                      <div class="col-md-2">
                         <a th:href="@{'/trang-chu/book-detail/'+${book.id}}"
                           ><img
                             style="width: 40px"
@@ -53,10 +53,10 @@
                             alt="${book.bookTitle}"
                         /></a>
                       </div>
-                      <div class="col-md-3">[[${book.bookTitle}]]</div>
+                      <div class="col-md-5">[[${book.bookTitle}]]</div>
                       <div class="col-md-2">[[${book.quantity}]]</div>
-                      <div class="col-md-3">
-                        <strong><span>$</span>[[${book.price}]]</strong>
+                      <div class="col-md-2">
+                        <strong>[[${book.price}]]<span>đ</span></strong>
                       </div>
                     </div>
                   </th:block>
@@ -70,6 +70,12 @@
                   >
                     <i class="bi bi-check-circle-fill"></i>
                   </button>
+                </div>
+                <div class="row">
+                  <div class="total-money">
+                    Tổng tiền:
+                    <span class="money">[[${order.totalMoney}]]đ</span>
+                  </div>
                 </div>
               </div>
             </th:block>
@@ -93,6 +99,15 @@
         }
         .comfirn-btn i {
           font-size: 24px;
+        }
+        .money {
+          color: red;
+        }
+        .total-money {
+          text-align: center;
+          font-size: 18px;
+          font-family: monospace;
+          font-weight: bold;
         }
       </style>
 

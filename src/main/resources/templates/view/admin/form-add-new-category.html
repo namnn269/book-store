@@ -24,11 +24,11 @@
               th:action="@{/admin/save-category}"
               method="post"
               th:object="${category}"
+              th:onsubmit="return checkFormCategory()"
             >
               <th:block th:if="*{id}">
                 <input type="hidden" th:field="*{id}" />
               </th:block>
-              th:onsubmit="return checkFormNewBook()"
               <!-- book title -->
               <h5>Tên thể loại</h5>
               <div class="form-group input-group">
@@ -39,6 +39,7 @@
                 </div>
                 <input
                   th:field="*{categoryTitle}"
+                  id="title-category"
                   class="form-control"
                   placeholder="Tên thể loại"
                   type="text"
@@ -53,6 +54,7 @@
                 th:text="${errorMsg.content}"
               ></div>
               <div th:class="alert-danger" id="passwordError"></div>
+              <div id="message"></div>
               <!-- submit button -->
               <div class="form-group row">
                 <div class="col-4">
@@ -87,8 +89,21 @@
         th:src="@{/js/management-category.js}"
       ></script> -->
       <script>
-        $(".nav-sidebar").removeClass("active");
-        $(".category-nav-sidebar").addClass("active");
+        $(document).ready(function () {
+          $(".nav-sidebar").removeClass("active");
+          $(".category-nav-sidebar").addClass("active");
+        });
+
+        /////////////////////////////////////////////////////////
+        let titleCategory = $("#title-category");
+        function checkFormCategory() {
+          // if (!$("#title-category").val().trim()) {
+          //   $("#message").addClass("alert alert-danger");
+          //   $("#message").text("Không hợp lệ!");
+          //   return false;
+          // }
+          return true;
+        }
       </script>
     </th:block>
   </body>
