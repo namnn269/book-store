@@ -1,1 +1,2 @@
-web: Java $Java_OPTS -jar target/dependency/webapp-runner.jar –port $PORT target/*.war
+web: Java $Java_OPTS -jar target/dependency/thymeleaf-layout-dialect-3.0.0.jar –port $PORT target/*.war
+web: Java $Java_OPTS -jar target/dependency/groovy-extensions-1.1.0.jar –port $PORT target/*.war
