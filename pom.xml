@@ -8,7 +8,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.nam</groupId>
-	<artifactId>book_store</artifactId> 
+	<artifactId>book_store</artifactId>
 	<version>0.1</version>
 	<!-- <packaging>war</packaging> -->
 	<name>book_store</name>
@@ -100,6 +100,19 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Building an executable jar -->
+				<groupId>org.apache.maven.plugins</groupId> 
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<!-- give full qualified name of your main class-->
+							<mainClass>com.nam.BookStoreApplication</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>
