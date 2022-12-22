@@ -1,5 +1,6 @@
 package com.nam.app;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.TemplateEngine;
@@ -9,6 +10,7 @@ import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import nz.net.ultraq.thymeleaf.layoutdialect.decorators.strategies.GroupingStrategy;
 
 @Configuration
+@ConditionalOnClass(name = "nz.net.ultraq.thymeleaf.LayoutDialect")
 public class ThymeleafLayoutConfig {
 
 	@Bean
