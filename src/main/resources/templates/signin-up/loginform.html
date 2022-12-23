@@ -85,6 +85,11 @@
                           Tài khoản hoặc mật khẩu sai
                         </p>
                       </div>
+                      <div th:if="${message}">
+                        <p class="alert alert-success ">
+                          [[${message}]]
+                        </p>
+                      </div>
                       <div id="errormsg" class="alert-danger"></div>
                       <div class="text-center pt-1 mb-5 pb-1">
                         <button

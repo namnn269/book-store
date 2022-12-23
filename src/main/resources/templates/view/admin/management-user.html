@@ -76,10 +76,10 @@
                   <th style="width: 10%">#</th>
                   <th style="width: 15%">Username</th>
                   <th style="width: 15%">Name</th>
-                  <th style="width: 30%">Email</th>
+                  <th style="width: 25%">Email</th>
                   <th style="width: 10%">Role</th>
                   <th style="width: 10%">Status</th>
-                  <th style="width: 20%">Action</th>
+                  <th style="width: 25%">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -113,11 +113,11 @@
       </style>
       <script
         type="text/javascript"
-        th:src="@{/js/management-user.js}"
+        th:src="@{/js/admin/management-user.js}"
       ></script>
 
       <script>
-        $(document).ready(function () {
+        /* $(document).ready(function () {
           // xóa nhiều phần tử đã chọn
           $("#delete-many-btn").click(function () {
             let values = [];
@@ -257,7 +257,7 @@
         // lấy id status filter
         function getStatus() {
           return Number.parseInt($("#status").val());
-        }
+        } */
       </script>
     </th:block>
   </body>

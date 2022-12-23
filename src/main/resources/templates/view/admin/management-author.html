@@ -3,7 +3,7 @@
   lang="en"
   xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{view/admin/_layout_admin}"
+  layout:decorate="~{/view/admin/_layout_admin}"
 >
   <body>
     <div layout:fragment="content">
@@ -94,10 +94,10 @@
       </style>
       <script
         type="text/javascript"
-        th:src="@{/js/management-author.js}"
+        th:src="@{/js/admin/management-author.js}"
       ></script>
       <script>
-        $(document).ready(function () {
+       /*  $(document).ready(function () {
           // xóa nhiều phần tử đã chọn
           $("#delete-many-btn").click(function () {
             let values = [];
@@ -232,7 +232,7 @@
         // lấy search word
         function getSearchFor() {
           return $("#admin-search-input").val();
-        }
+        } */
       </script>
     </th:block>
   </body>

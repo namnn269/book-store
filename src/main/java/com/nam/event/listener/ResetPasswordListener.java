@@ -2,6 +2,7 @@ package com.nam.event.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.nam.dto.EmailDto;
@@ -18,14 +19,16 @@ public class ResetPasswordListener implements ApplicationListener<ResetPasswordE
 	IEmailService emailService;
 	@Autowired
 	IResetPasswordTokenRepository resetPasswordTokenRepo;
+	@Autowired
+	private Environment env;
 
 	@Override
 	public void onApplicationEvent(ResetPasswordEvent event) {
-
+		Long expiration = Long.parseLong(env.getProperty("resetpassword.expiration"));
 		User user = event.getUser();
 		ResetPasswordToken token = user.getPasswordToken();
 		if (token == null)
-			token = new ResetPasswordToken(user);
+			token = new ResetPasswordToken(user,expiration);
 		else
 			token.resetToken();
 

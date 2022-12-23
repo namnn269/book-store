@@ -212,7 +212,7 @@ public class HomeController {
 	public ModelAndView resetPassword(	@RequestParam("username") String username,
 										@RequestParam("email") String email,
 										HttpServletRequest http) {
-		ModelAndView mav = new ModelAndView("view/user/form-reset-password");
+		ModelAndView mav = new ModelAndView("signin-up/loginform");
 		try {
 			Message message = userService.sendEmailToConfirmBeforeResetPassowrd(username, email, http);
 			mav.addObject("message", message.getContent());

@@ -17,7 +17,8 @@ import lombok.Data;
 @Data
 @MappedSuperclass
 public class UserToken {
-	private final Long EXPIRATION = 60L; // seconds
+	
+	private Long EXPIRATION = 60l; // seconds
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +33,8 @@ public class UserToken {
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 	
-	public UserToken(User user) {
+	public UserToken(User user, long expiration) {
+		this.EXPIRATION = expiration;
 		this.user = user;
 		this.token = UUID.randomUUID().toString();
 		this.expirationDate = getNextExpirationDate();

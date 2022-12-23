@@ -2,6 +2,7 @@ package com.nam.event.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.nam.dto.EmailDto;
@@ -16,18 +17,20 @@ public class RegistrationCompletionListener implements ApplicationListener<Regis
 
 	@Autowired
 	private IRegistraionTokenRepository tokenRepo;
-
 	@Autowired
 	private IEmailService emailService;
-
+	@Autowired
+	private Environment env;
+	
 	@Override
 	public void onApplicationEvent(RegistrationCompletionEvent event) {
+		Long expiration = Long.parseLong(env.getProperty("registration.expiration"));
 		User user = event.getUser();
 		RegistrationToken token = user.getRegistrationToken();
 		if (token != null) // TH token quá hạn => reset token
 			token.resetToken();
 		else
-			token = new RegistrationToken(user); // TH tạo mới cho token
+			token = new RegistrationToken(user,expiration); // TH tạo mới cho token
 
 		tokenRepo.save(token);
 

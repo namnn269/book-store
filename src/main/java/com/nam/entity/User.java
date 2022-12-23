@@ -41,7 +41,7 @@ public class User implements Serializable {
 	@Column(length = 250)
 	private String username;
 
-	@Column 
+	@Column
 	private String password;
 
 	@Column(length = 200)
@@ -52,17 +52,17 @@ public class User implements Serializable {
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-	private Collection<Role> roles=new ArrayList<>();
+	private Collection<Role> roles = new ArrayList<>();
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private RegistrationToken registrationToken;
-	
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private ResetPasswordToken passwordToken;
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private ProfileUser profileUser;
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<Order> orders = new ArrayList<>();
 }

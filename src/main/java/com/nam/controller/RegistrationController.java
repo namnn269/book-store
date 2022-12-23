@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,8 @@ public class RegistrationController {
 	private IRegistraionTokenRepository tokenRepo;
 	@Autowired
 	private ApplicationEventPublisher publisher;
+	@Autowired
+	private Environment env;
 
 	/* Hiển thị form đăng ký người dùng */
 	@GetMapping("/form")
@@ -53,6 +56,10 @@ public class RegistrationController {
 			User user = (User) userService.saveNewRegisterUser(userRegDto).get();
 			String url = UrlFromUser.getUrl(http);
 			publisher.publishEvent(new RegistrationCompletionEvent(user, http.getLocale(), url));
+			String message = env.getProperty("message.confirm.email.notification")
+							+ Long.parseLong(env.getProperty("registration.expiration"))/60
+							+ env.getProperty("message.minute");
+			mav.addObject("message", message);
 			mav.setViewName("signin-up/loginform");
 		} catch (ObjectAlreadyExistedException | ValidFormException p) {
 			ErrorMsgDto msg = new ErrorMsgDto(p.getMessage());

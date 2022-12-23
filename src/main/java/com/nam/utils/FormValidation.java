@@ -19,10 +19,9 @@ public class FormValidation {
 		if (!userDto.getPassword().equals(userDto.getRePassword()))
 			return "Mật khẩu không trùng khớp";
 		String checkPassword = checkPassword(userDto.getPassword());
-		if (checkPassword != null) {
-			System.out.println("check pass : "+checkPassword);
+		if (checkPassword != null) 
 			return checkPassword;
-		}
+	
 		String checkEmail = checkEmail(userDto.getEmail());
 		if (checkEmail != null)
 			return checkEmail;
