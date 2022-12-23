@@ -65,6 +65,7 @@ public class HomeController {
 	/* hiển thị trang chủ của web */
 	@GetMapping(value = { "" })
 	public String home(Model model) {
+		
 		List<DisplayBookDto> bestSellerBooks=bookService.findBestSellerBooks();
 		List<Category> categories= categoryService.findAll();
 		

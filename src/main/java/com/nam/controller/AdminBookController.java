@@ -61,6 +61,7 @@ public class AdminBookController {
 	@GetMapping(value = "/management-book")
 	public String bookManagement(Model model, @ModelAttribute("message") String message,
 								@ModelAttribute("error") String error) {
+		
 		List<Category> categories= categoryService.findAll();
 		model.addAttribute("categories", categories);
 		model.addAttribute("message", message.equals("")?null:message);
