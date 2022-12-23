@@ -148,7 +148,7 @@ public class HomeController {
 
 		String html="<div class='col-md-4 col-sm-6 col-xs-12'>"
 				+ "                <div class='product-item'>"
-				+ "                  <div class=''>"
+				+ "                  <div class='item1'>"
 				+ "                      <a href='"+linkDetail+"'>"
 				+ "                    		<img"
 				+ "                      	 src='"+bookDto.getImgLink()+"'"
