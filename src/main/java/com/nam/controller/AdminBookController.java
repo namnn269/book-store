@@ -193,7 +193,7 @@ public class AdminBookController {
 					+ "                  <td>"+book.getAuthors()+"</td>"
 					+ "                  <td>"+book.getAmountInStock()+"</td>"
 					+ "                  <td>"
-					+ "                    <span>"+book.getPrice()+"</span>"
+					+ "                    <span>"+book.getPrice()+"đ</span>"
 					+ "                  </td>"
 					+ "                  <td>"
 					+ "                    <a"
