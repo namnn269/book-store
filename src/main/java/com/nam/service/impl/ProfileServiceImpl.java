@@ -44,7 +44,7 @@ public class ProfileServiceImpl implements IProfileService {
 		}
 		profileUser.setUser(user);
 		profileRepo.save(profileUser);
-		return new Message(env.getProperty("message.update.phone.success"));
+		return new Message(env.getProperty("message.update.info.success"));
 	}
 
 	/* Lấy ra profile của người dùng đang đăng nhập */
