@@ -22,7 +22,7 @@ import com.nam.service.ICategoryService;
 import java.util.Collections;
 
 @Service
-@PropertySource(value = "messages.properties", encoding = "utf-8")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 public class CategoryServiceImpl implements ICategoryService {
 	@Autowired
 	private ICategoryRepository categoryRepo;

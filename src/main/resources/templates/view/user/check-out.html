@@ -84,34 +84,37 @@
                         </div>
                       </div>
                       <div class="col-md-6 order-md-1">
-                        <form class="needs-validation" th:object="${profile}">
-                          <div class="row">
-                            <div class="col-md-12 mb-3">
-                              <label for="lastName">Full name</label>
-                              <input
-                                class="form-control"
-                                th:value="*{fullName}"
-                                disabled="disabled"
-                                style="background-color: white"
-                              />
-                            </div>
-                          </div>
+                        <form
+                          th:action="@{/cart/complete-payment}"
+                          class="needs-validation"
+                          th:object="${profile}"
+                          method="post"
+                          th:onsubmit="return checkFormCheckOut()"
+                        >
                           <div class="mb-3">
                             <label for="username">Username</label>
                             <div class="input-group">
                               <input
                                 class="form-control"
-                                th:value="*{username}"
+                                th:field="*{username}"
                                 disabled="disabled"
                                 style="background-color: white"
                               />
                             </div>
                           </div>
                           <div class="mb-3">
+                            <label for="lastName">Người nhận</label>
+                            <input
+                              class="form-control"
+                              th:field="*{fullName}"
+                              style="background-color: white"
+                            />
+                          </div>
+                          <div class="mb-3">
                             <label for="email">Email </label>
                             <input
                               class="form-control"
-                              th:value="*{email}"
+                              th:field="*{email}"
                               disabled="disabled"
                               style="background-color: white"
                             />
@@ -120,22 +123,29 @@
                             <label for="phone">Phone </label>
                             <input
                               class="form-control"
-                              th:value="*{phoneNumber}"
-                              disabled="disabled"
-                              style="background-color: white"
+                              th:field="*{phoneNumber}"
                               id="phone"
+                              style="background-color: white"
                             />
                           </div>
                           <div class="mb-3">
                             <label for="address">Address</label>
                             <input
-                              class="form-control"
-                              th:value="*{address}"
-                              disabled="disabled"
-                              style="background-color: white"
                               id="address"
+                              class="form-control"
+                              th:field="*{address}"
+                              style="background-color: white"
                             />
                           </div>
+                          <div id="message"></div>
+                          <button
+                            style="position: absolute; right: 0; left: 0"
+                            class="btn btn-primary"
+                            type="submit"
+                            th:if="${!order.isEmpty && profile.phoneNumber!=null && profile.address!=null}"
+                          >
+                            Đặt hàng
+                          </button>
                         </form>
                       </div>
                     </div>
@@ -152,18 +162,6 @@
                 </div>
               </div>
             </div>
-            <a
-              th:if="${!order.isEmpty && profile.phoneNumber!=null && profile.address!=null}"
-              th:href="@{/cart/complete-payment}"
-            >
-              <button
-                style="position: absolute; right: 0; left: 0"
-                class="btn btn-primary"
-                type="submit"
-              >
-                Đặt hàng
-              </button>
-            </a>
             <!-- END CONTENT -->
           </div>
           <!-- END SIDEBAR & CONTENT -->
@@ -176,58 +174,45 @@
           font-size: 14px;
           margin-left: 10px;
         }
+
         th {
           text-align: center;
         }
+
         td {
           text-align: center;
         }
+
         .thead {
           font-size: 12px !important;
         }
+
         tbody tr td {
           font-size: 14px !important;
         }
+
         tbody tr td img {
           width: 40px !important;
         }
       </style>
-       <script type="text/javascript" th:src="@{/js/user/check-out.js}"></script>
+      <script type="text/javascript" th:src="@{/js/user/check-out.js}"></script>
       <script type="text/javascript">
-        /* $(document).ready(
-          $(".btn-down").click(function () {
-            callChangeAjax(false, $(this).val());
-          }),
-          $(".btn-up").click(function () {
-            callChangeAjax(true, $(this).val());
-          }),
-          $(".delete").click(function () {
-            callDeleteAjax($(this).val());
-            $(this).parents("tr").hide();
-          })
-        );
-
-        function callDeleteAjax(id) {
-          $.ajax({
-            type: "post",
-            data: { id: id },
-            url: "/cart/delete-order-detail-incart",
-            success: function () {
-              console.log("delete ", id);
-            },
-          });
-        }
-
-        function callChangeAjax(increase, id) {
-          $.ajax({
-            type: "post",
-            data: { increase: increase, id: id },
-            url: "/cart/change-amount-in-cart",
-            success: function () {
-              console.log("change ", id);
-            },
-          });
-        } */
+        const checkFormCheckOut = () => {
+          const phone = $("#phone").val();
+          const address = $("#address").val();
+          console.log(address);
+          if (isNaN(phone) || phone.length < 8 || phone.length > 10) {
+            $("#message").addClass("alert alert-danger");
+            $("#message").text("SĐT không hợp lệ!");
+            return false;
+          }
+          if (address.trim().length <= 0) {
+            $("#message").addClass("alert alert-danger");
+            $("#message").text("Vui lòng nhập địa chỉ!");
+            return false;
+          }
+          return true;
+        };
       </script>
     </th:block>
   </body>

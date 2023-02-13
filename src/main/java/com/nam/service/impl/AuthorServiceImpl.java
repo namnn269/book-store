@@ -22,7 +22,7 @@ import com.nam.repository.IAuthorRepository;
 import com.nam.service.IAuthorService;
 
 @Service
-@PropertySource(value = "messages.properties", encoding = "utf-8")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 public class AuthorServiceImpl implements IAuthorService {
 
 	@Autowired

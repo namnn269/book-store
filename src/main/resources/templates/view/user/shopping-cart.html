@@ -13,12 +13,16 @@
           <!-- BEGIN CONTENT -->
           <div class="col-md-12 col-sm-12">
             <h1>Shopping cart</h1>
+            <div id="message"></div>
             <div class="goods-page">
               <div class="goods-data clearfix">
                 <div class="table-wrapper-responsive">
                   <table th:unless="${order.isEmpty}" summary="Shopping cart">
                     <thead>
                       <tr>
+                        <td>
+                          <button class="delete-many">Delete</button>
+                        </td>
                         <th class="goods-page-image" style="width: 10%">
                           Hình ảnh
                         </th>
@@ -39,6 +43,13 @@
                     <tbody>
                       <th:block th:each="book: ${order}">
                         <tr>
+                          <td>
+                            <input
+                              class="delete-many-input"
+                              type="checkbox"
+                              th:value="${book.id}"
+                            />
+                          </td>
                           <td class="goods-page-image">
                             <a th:href="@{'/trang-chu/book-detail/'+${book.id}}"
                               ><img
@@ -145,44 +156,19 @@
         td {
           text-align: center;
         }
-      </style>
-       <script type="text/javascript" th:src="@{/js/user/shopping-cart.js}"></script>
-      <script type="text/javascript">
-       /*  $(document).ready(
-          $(".btn-down").click(function () {
-            callChangeAjax(false, $(this).val());
-          }),
-          $(".btn-up").click(function () {
-            callChangeAjax(true, $(this).val());
-          }),
-          $(".delete").click(function () {
-            callDeleteAjax($(this).val());
-            $(this).parents("tr").hide();
-          })
-        );
-
-        function callDeleteAjax(id) {
-          $.ajax({
-            type: "post",
-            data: { id: id },
-            url: "/cart/delete-order-detail-incart",
-            success: function () {
-              console.log("delete ", id);
-            },
-          });
+        .delete-many {
+          background-color: red;
+          border: none;
+          color: white;
+          width: 64px;
+          height: 29px;
         }
-
-        function callChangeAjax(increase, id) {
-          $.ajax({
-            type: "post",
-            data: { increase: increase, id: id },
-            url: "/cart/change-amount-in-cart",
-            success: function () {
-              console.log("change ", id);
-            },
-          });
-        } */
-      </script>
+      </style>
+      <script
+        type="text/javascript"
+        th:src="@{/js/user/shopping-cart.js}"
+      ></script>
+      <script type="text/javascript"></script>
     </th:block>
   </body>
   <!-- END BODY -->

@@ -9,12 +9,12 @@ $(document).ready(function () {
   });
 
   // show books by category
-  $(".category").click(function () {
-    $("#pagination-id").hide(this);
-    let categoryId = Number.parseInt($(this).val());
-    let sortBy = $("#sort-by").val();
-    callCategoryAjax(sortBy, categoryId);
-  });
+  // $(".category").click(function () {
+  //   $("#pagination-id").hide(this);
+  //   let categoryId = Number.parseInt($(this).val());
+  //   let sortBy = $("#sort-by").val();
+  //   callCategoryAjax(sortBy, categoryId);
+  // });
 
   // lần vào trang đầu tiên tải trang 1
   callAjax(0);
@@ -65,7 +65,7 @@ $(document).ready(function () {
 // hàm gọi AJAX - get author
 function callAjax(pageNo) {
   $.ajax({
-    url: "/trang-chu/product-home-ajax",
+    url: domain + "/trang-chu/product-home-ajax",
     data: {
       pageNo: pageNo,
       pageSize: getPageSize(),

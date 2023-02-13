@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{view/admin/_layout_admin}"
+>
+  <body>
+    <div layout:fragment="content">
+      <div class="container">
+        <!-- BEGIN SIDEBAR & CONTENT -->
+        <div class="row margin-bottom-40">
+          <!-- BEGIN CONTENT -->
+          <div class="col-md-12 col-sm-12">
+            <div class="goods-page">
+              <div class="goods-data clearfix">
+                <div class="table-wrapper-responsive">
+                  <div class="container">
+                    <div th:if="${order==null}">Không tìm thấy đơn hàng</div>
+                    <div th:if="${order}">
+                      <h2>
+                        Trạng thái:
+                        <span th:switch="${order.status}">
+                          <span th:case="'1'">Chờ xác nhận</span>
+                          <span th:case="'2'">Đã xác nhận</span>
+                          <span th:case="'3'">Đã hủy</span>
+                        </span>
+                      </h2>
+                      <h2 th:if="${order.status==3}">
+                        Hủy bởi:
+                        <span th:switch="${order.cancelBy}">
+                          <span th:case="'1'">Admin</span>
+                          <span th:case="'2'">User</span>
+                        </span>
+                      </h2>
+                      <div id="alert-confirm"></div>
+                      <div class="row">
+                        <div class="col-md-6 order-md-2">
+                          <div class="">
+                            <table summary="Shopping cart">
+                              <thead>
+                                <tr>
+                                  <th class="thead" style="width: 20%">
+                                    Hình ảnh
+                                  </th>
+                                  <th class="thead" style="width: 20%">
+                                    Tên sách
+                                  </th>
+                                  <th class="thead" style="width: 20%">
+                                    Số lượng
+                                  </th>
+                                  <th class="thead" style="width: 200%">Giá</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <th:block th:each="book: ${order.orderDetails}">
+                                  <tr>
+                                    <td class="goods-page-image">
+                                      <a
+                                        th:href="@{'/trang-chu/book-detail/'+${book.bookId}}"
+                                        ><img
+                                          th:src="@{${book.imgLink}}"
+                                          alt="${book.bookTitle}"
+                                      /></a>
+                                    </td>
+                                    <td
+                                      class="goods-page-ref-no"
+                                      style="font-size: 20px"
+                                    >
+                                      [[${book.bookTitle}]]
+                                    </td>
+                                    <td
+                                      class="goods-page-ref-no"
+                                      style="font-size: 20px"
+                                    >
+                                      [[${book.quantity}]]
+                                    </td>
+                                    <td class="goods-page-price">
+                                      <strong
+                                        >[[${book.price}]]<span>đ</span></strong
+                                      >
+                                    </td>
+                                  </tr>
+                                </th:block>
+                              </tbody>
+                            </table>
+                            <ul class="shopping-total" style="float: none">
+                              <li class="shopping-total-price">
+                                <em>Total</em>
+                                <strong class="price"
+                                  >[[${order.totalMoney}]]<span>đ</span></strong
+                                >
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="col-md-6 order-md-1">
+                          <form
+                            th:action="@{/cart/complete-payment}"
+                            class="needs-validation"
+                            th:object="${order}"
+                            method="post"
+                            th:onsubmit="return checkFormCheckOut()"
+                          >
+                            <div class="row">
+                              <div class="col-md-12 mb-3">
+                                <label for="lastName">Người đặt</label>
+                                <input
+                                  class="form-control"
+                                  th:field="*{username}"
+                                  readonly
+                                  style="background-color: white"
+                                />
+                              </div>
+                            </div>
+                            <div class="mb-3">
+                              <label for="username">Người nhận</label>
+                              <div class="input-group">
+                                <input
+                                  class="form-control"
+                                  th:field="*{receiver}"
+                                  readonly
+                                  style="background-color: white"
+                                />
+                              </div>
+                            </div>
+                            <div class="mb-3">
+                              <label for="email">Thời gian </label>
+                              <input
+                                class="form-control"
+                                th:field="*{orderDate}"
+                                readonly
+                                style="background-color: white"
+                              />
+                            </div>
+                            <div class="mb-3">
+                              <label for="phone">Phone </label>
+                              <input
+                                class="form-control"
+                                th:field="*{phoneNumber}"
+                                id="phone"
+                                readonly
+                                style="background-color: white"
+                              />
+                            </div>
+                            <div class="mb-3">
+                              <label for="address">Address</label>
+                              <input
+                                id="address"
+                                class="form-control"
+                                th:field="*{address}"
+                                readonly
+                                style="background-color: white"
+                              />
+                            </div>
+                            <div id="message"></div>
+                          </form>
+                          <div class="two-buttons" th:if="${order.status==1}">
+                            <button
+                              class="confirm-btn btn btn-success"
+                              th:value="${order.id}"
+                            >
+                              Xác nhận
+                            </button>
+                            <button
+                              class="cancel-btn btn btn-danger"
+                              th:value="${order.id}"
+                            >
+                              Hủy
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END CONTENT -->
+          </div>
+          <!-- END SIDEBAR & CONTENT -->
+        </div>
+      </div>
+    </div>
+    <th:block layout:fragment="script">
+      <script></script>
+      <style>
+        .icon {
+          font-size: 14px;
+          margin-left: 10px;
+        }
+
+        th {
+          text-align: center;
+        }
+
+        td {
+          text-align: center;
+        }
+
+        .thead {
+          font-size: 12px !important;
+        }
+
+        tbody tr td {
+          font-size: 14px !important;
+        }
+
+        tbody tr td img {
+          width: 40px !important;
+        }
+      </style>
+      <script
+        type="text/javascript"
+        th:src="@{/js/admin/order-detail-admin.js}"
+      ></script>
+    </th:block>
+  </body>
+  <!-- END BODY -->
+</html>

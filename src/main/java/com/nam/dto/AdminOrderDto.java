@@ -11,9 +11,21 @@ import lombok.NoArgsConstructor;
 public class AdminOrderDto {
 	private Long id;
 	
-	private double totalMoney;
+	private String totalMoney;
 	
 	private UserDto buyer;
 	
-	private Collection<PurchasedOrderDetailDto> bookDtos;
+	private String receiver;
+	
+	private String phoneNumber;
+	
+	private String address;
+	
+	private String date;
+	
+	private int status;
+	
+	private int cancelBy;
+	
+	private Collection<OrderDetailDto> orderDetailDtos;
 }

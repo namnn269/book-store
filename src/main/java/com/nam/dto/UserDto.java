@@ -22,9 +22,4 @@ public class UserDto {
 
 	private List<String> role;
 
-//	private ProfileUser profileUser;
-
-//	private Collection<Order> orders = new ArrayList<>();
-
-//	private Collection<Discount> discounts = new ArrayList<>();
 }

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{view/admin/_layout_admin}"
+>
+  <body>
+    <div layout:fragment="content">
+      <!-- /#page-content-wrapper -->
+      <div class="container-xl">
+        <div class="table-responsive mt-0">
+          <div class="table-wrapper">
+            <div class="table-title">
+              <div class="row">
+                <div class="col-sm-5">
+                  <h2>Order <b>Management: Chờ xác nhận</b></h2>
+                </div>
+              </div>
+            </div>
+            <!-- tr start -->
+            <br />
+            <!-- header -->
+            <div id="alert-confirm"></div>
+            <div class="row lead fw-bold">
+              <div class="col-md-1">STT</div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-2">Hình ảnh</div>
+                  <div class="col-md-6">Tên sách</div>
+                  <div class="col-md-2">Số lượng</div>
+                  <div class="col-md-2">Giá</div>
+                </div>
+              </div>
+              <div class="col-md-1">Người mua</div>
+              <div class="col-md-1">SĐT</div>
+              <div class="col-md-2">Địa chỉ</div>
+              <div class="col-md-1">Xác nhận</div>
+            </div>
+            <div th:if="${createdOrders.isEmpty}" class="alert alert-warning">
+              Danh sách trống
+            </div>
+            <th:block th:each="order,itr: ${createdOrders}">
+              <div class="row lead row-order">
+                <hr class="mt-2 mb-3" />
+                <div class="col-md-1">[[${itr.index+1}]]</div>
+                <div class="col-md-6">
+                  <th:block th:each=" book : ${order.bookDtos}">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <a th:href="@{'/trang-chu/book-detail/'+${book.id}}"
+                          ><img
+                            style="width: 40px"
+                            th:src="@{${book.imgLink}}"
+                            alt="${book.bookTitle}"
+                        /></a>
+                      </div>
+                      <div class="col-md-6">[[${book.bookTitle}]]</div>
+                      <div class="col-md-2">[[${book.quantity}]]</div>
+                      <div class="col-md-2">
+                        <strong>[[${book.price}]]<span>đ</span></strong>
+                      </div>
+                    </div>
+                  </th:block>
+                </div>
+                <div class="col-md-1">[[${order.buyer.fullName}]]</div>
+                <div class="col-md-1">[[${order.phoneNumber}]]</div>
+                <div class="col-md-2">[[${order.address}]]</div>
+                <div class="col-md-1">
+                  <button
+                    class="comfirn-btn"
+                    type="button"
+                    th:value="${order.id}"
+                  >
+                    <i class="bi bi-check-circle-fill"></i>
+                  </button>
+                </div>
+                <div class="row">
+                  <div class="total-money">
+                    Tổng tiền:
+                    <span class="money">[[${order.totalMoney}]]đ</span>
+                  </div>
+                </div>
+              </div>
+            </th:block>
+            <!-- end -->
+
+            <!-- tr end -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+    <th:block layout:fragment="script">
+
+      <style>
+        .comfirn-btn {
+          background-color: white;
+          border: none;
+        }
+        .comfirn-btn i {
+          font-size: 24px;
+        }
+        .money {
+          color: red;
+        }
+        .total-money {
+          text-align: center;
+          font-size: 18px;
+          font-family: monospace;
+          font-weight: bold;
+        }
+      </style>
+
+      <script type="text/javascript" th:src="@{/js/admin/management-order.js}"></script>
+    </th:block>
+  </body>
+</html>

@@ -35,7 +35,7 @@ import com.nam.repository.IBookRepository;
 import com.nam.repository.IOrderDetailRepository;
 import com.nam.service.IBookService;
 
-@PropertySource(value = "messages.properties", encoding = "utf-8")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 @Service
 public class BookServiceImpl implements IBookService {
 	@Autowired
@@ -146,12 +146,17 @@ public class BookServiceImpl implements IBookService {
 	@Override
 	public Page<Book> getPageBook(int pageNo, int pageSize, String searchKey, long categoryId, String sortByPrice) {
 		Direction priceDirection;
-		if (sortByPrice.equalsIgnoreCase(env.getProperty("value.price.asc")))
-			priceDirection = Direction.ASC; 
-		else
+		if (sortByPrice.equalsIgnoreCase(env.getProperty("value.price.asc"))) {
+			sortByPrice = "price";
+			priceDirection = Direction.ASC;
+		} else if (sortByPrice.equalsIgnoreCase(env.getProperty("value.price.desc"))) {
 			priceDirection = Direction.DESC;
+			sortByPrice = "price";
+		} else {
+			priceDirection = Direction.ASC;
+			sortByPrice = "id";
+		}
 
-		sortByPrice="price";
 		Sort sort = Sort.by(priceDirection, sortByPrice); 
 		Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 		Page<Book> page;

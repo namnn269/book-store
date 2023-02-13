@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nam.dto.PurchasedOrderDetailDto;
+import com.nam.dto.OrderDetailDto;
 import com.nam.entity.Order;
 import com.nam.entity.OrderDetail;
 import com.nam.entity.User;
@@ -38,18 +38,17 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
 
 	/* Lấy ra danh sách order detail đã mua của khách */
 	@Override
-	public List<PurchasedOrderDetailDto> getListPurchasedOrderDetailDtos() {
+	public List<OrderDetailDto> getListPurchasedOrderDetailDtos() {
 		User user = userService.getCurrentLoggedInUser();
 
 		List<Order> orders = orderRepo.findByUserAndStatus(user, 1, 2);
-		List<PurchasedOrderDetailDto> purchasedOrderDetailDtos = new ArrayList<>();
+		List<OrderDetailDto> purchasedOrderDetailDtos = new ArrayList<>();
 
-		orders.stream()
-		.forEach(order -> order
+		orders.stream().forEach(order -> order
 							.getOrderDetails()
 							.stream()
-							.forEach(orderDetail -> {purchasedOrderDetailDtos.add(orderDetailMapper.fromOrderDetailToPurchasedBookDto(orderDetail));}
-				));
+							.forEach(orderDetail -> {purchasedOrderDetailDtos.add(orderDetailMapper.fromOrderDetailToOrderDetailDto(orderDetail));}
+							));
 		return purchasedOrderDetailDtos;
 	}
 

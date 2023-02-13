@@ -24,11 +24,17 @@ database
 	- expiredTime
 	- user_id (users 1:1)
 
-4. roles
+4. reset_password_token 
+	- id
+	- token
+	- expiredTime
+	- user_id (users 1:1)
+
+5. roles
 	- id
 	- role_name
 	
-5. books: 
+6. books: 
 	- id
 	- bookTitle
 	- description
@@ -40,29 +46,34 @@ database
 	- author_id (authors n:n)
 	- category_id (categories 1:n)
 	
-6. category: 
+7. category: 
 	- id
 	- categoryTitle
 	
-7. author: 
+8. author: 
 	- id
 	- fullName
-	- dateOfBirth
 	- description
 		
-8. Orders: x
+9. Orders: x
 	- id
 	- address
 	- status
 	- dateTime
 	- customer_id (users n:1)
 
-9. orderDetails: x
+10. orderDetails: x
 	- id
 	- amount
 	- price
 	- book_id (books n:1)
 	- order_id (order n:1)
 
+11. author_book
+	- book_id (ref: books: n:1)
+	- author_id (ref: authors: n:1)
+12. user_role
+	- user_id (ref: users: n:1)
+	- role_id (ref: roles: n:1)
 
 

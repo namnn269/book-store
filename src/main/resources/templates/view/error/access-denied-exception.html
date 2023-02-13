@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -85,7 +85,7 @@
         </header>
         <p id="fittext2">Không có quyền truy cập</p>
         <br />
-        <p id="fittext3"><a class="link" href="/trang-chu">Trang chủ</a></p>
+        <p id="fittext3"><a class="link" th:href="@{/trang-chu}">Trang chủ</a></p>
       </article>
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>

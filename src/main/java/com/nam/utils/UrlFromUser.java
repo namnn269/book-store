@@ -6,4 +6,5 @@ public class UrlFromUser {
 	public static String getUrl(HttpServletRequest http) {
 		return "http://" + http.getServerName() + ":" + http.getServerPort() + http.getContextPath();
 	}
+
 }

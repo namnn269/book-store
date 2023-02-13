@@ -35,10 +35,11 @@ import com.nam.repository.IResetPasswordTokenRepository;
 import com.nam.service.IBookService;
 import com.nam.service.ICategoryService;
 import com.nam.service.IUserService;
+import com.nam.utils.Constants;
 import com.nam.utils.UrlFromUser;
 
 @Controller
-@PropertySource(value = "messages.properties", encoding = "utf-8")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 @RequestMapping(value = {"/trang-chu","/"})
 public class HomeController {
 	@Autowired
@@ -53,14 +54,8 @@ public class HomeController {
 	private ApplicationEventPublisher publisher;
 	@Autowired
 	private Environment env;
-
-
 	
-	@GetMapping(value = "/test")
-	public String test() {
-		
-		return "view/user/trang-chu";
-	}
+	private String domain = Constants.DOMAIN;
 
 	/* hiển thị trang chủ của web */
 	@GetMapping(value = { "" })
@@ -141,7 +136,7 @@ public class HomeController {
 
 	/* phương thức trả về chuỗi HTML của 1 phần item hiển thị trên trang chủ dựa trên thuộc tính 1 cuốn sách */
 	private String getBookItemHtml(DisplayBookDto bookDto) {
-		String linkDetail = "/trang-chu/book-detail/" + bookDto.getId() + "";
+		String linkDetail = domain+"/trang-chu/book-detail/" + bookDto.getId() + "";
 		String authors = "";
 		for (String author : bookDto.getAuthors()) {
 			authors += "<br>- " + author;
@@ -218,6 +213,7 @@ public class HomeController {
 			Message message = userService.sendEmailToConfirmBeforeResetPassowrd(username, email, http);
 			mav.addObject("message", message.getContent());
 		} catch (ObjectNotFoundException o) {
+			mav.setViewName("view/user/form-reset-password");
 			mav.addObject("errormsg", o.getMessage());
 		} catch (Exception e) {
 		}

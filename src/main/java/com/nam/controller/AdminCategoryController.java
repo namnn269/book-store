@@ -23,6 +23,7 @@ import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.ObjectAlreadyExistedException;
 import com.nam.exception_mesage.ObjectNotFoundException;
 import com.nam.service.ICategoryService;
+import com.nam.utils.Constants;
 
 @Controller
 @RequestMapping("/admin")
@@ -30,6 +31,8 @@ public class AdminCategoryController {
 
 	@Autowired
 	private ICategoryService categoryService;
+	
+	private String domain = Constants.DOMAIN;
 
 	/* Hiển thị trang quản lý thể loại admin */
 	@GetMapping("/management-category")
@@ -122,7 +125,7 @@ public class AdminCategoryController {
 					+ "                    </td>"
 					+ "                    <td>"
 					+ "                      <a"
-					+ "                        href='/admin/update-category/" + category.getId() + "'"
+					+ "                        href='"+domain+"/admin/update-category/" + category.getId() + "'"
 					+ "                        class='settings'"
 					+ "                        title='Settings'"
 					+ "                        data-toggle='tooltip'"

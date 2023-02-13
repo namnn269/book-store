@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ import com.nam.utils.UrlFromUser;
 
 @Controller
 @RequestMapping("/register")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 public class RegistrationController {
 
 	@Autowired
@@ -99,7 +101,7 @@ public class RegistrationController {
 
 	/* Nếu token bị quá hạn thì phương thức này sẽ thực hiện gửi lại email để xác thực lại */
 	@GetMapping(value = "/expiration-token")
-	public String handleExpiredToken(@RequestParam("token") String tokenStr, HttpServletRequest http) {
+	public String handleExpiredToken(@RequestParam("token") String tokenStr, HttpServletRequest http, Model model) {
 		RegistrationToken token = tokenRepo.findByToken(tokenStr);
 		// mã token sai
 		if (token == null) 
@@ -107,6 +109,10 @@ public class RegistrationController {
 		String url = UrlFromUser.getUrl(http);
 		token.resetToken();
 		publisher.publishEvent(new RegistrationCompletionEvent(token.getUser(), http.getLocale(), url));
+		String message = env.getProperty("message.confirm.email.notification")
+				+ Long.parseLong(env.getProperty("registration.expiration"))/60
+				+ env.getProperty("message.minute");
+		model.addAttribute("message", message);
 		return "signin-up/loginform";
 	}
 }

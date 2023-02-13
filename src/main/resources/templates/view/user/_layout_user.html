@@ -54,29 +54,25 @@
       }
     </style>
   </head>
-  <!-- Head END -->
-
-  <!-- Body BEGIN -->
   <body class="ecommerce">
-    <!-- BEGIN TOP BAR -->
     <div class="pre-header">
       <div class="container">
         <div class="row">
-          <!-- BEGIN TOP BAR LEFT PART -->
           <div class="col-md-4 col-sm-4 additional-shop-info">
             <h5 th:if="${username}">Welcome [[${username}]]</h5>
           </div>
-          <!-- END TOP BAR LEFT PART -->
-          <!-- BEGIN TOP BAR MENU -->
           <div class="col-md-8 col-sm-8 additional-nav">
             <ul class="list-unstyled list-inline pull-right">
               <li th:if="${username}">
                 <a th:href="@{/account/my-account}">My Account</a>
               </li>
-              <li th:unless="${username}">
-                <a href="/register/form">Sign up</a>
+              <li th:if="${username}">
+                <a th:href="@{/orders/my-orders}">My orders</a>
               </li>
-              <li th:unless="${username}"><a href="/login">Log In</a></li>
+              <li th:unless="${username}">
+                <a th:href="@{/register/form}">Sign up</a>
+              </li>
+              <li th:unless="${username}"><a th:href="@{/login}">Log In</a></li>
               <li th:if="${username}">
                 <form th:action="@{/logout}" class="d-flex" method="post">
                   <input type="hidden" name="action" value="logout" />
@@ -86,13 +82,9 @@
               <li><a th:href="@{/admin/management-user}">Admin</a></li>
             </ul>
           </div>
-          <!-- END TOP BAR MENU -->
         </div>
       </div>
     </div>
-    <!-- END TOP BAR -->
-
-    <!-- BEGIN HEADER -->
     <div class="header">
       <div class="container">
         <a class="site-logo" th:href="@{/trang-chu}"
@@ -130,10 +122,8 @@
             </div>
           </div>
         </div>
-        <!--END CART -->
       </div>
     </div>
-    <!-- Header END -->
 
     <div class="title-wrapper">
       <div class="container">
@@ -231,7 +221,10 @@
     ></script>
 
     <th:block layout:fragment="script"></th:block>
-    <script type="text/javascript" th:src="@{/js/user/layout.js}"></script>
+    <script
+      type="text/javascript"
+      th:src="@{/js/user/_layout_user.js}"
+    ></script>
   </body>
   <!-- END BODY -->
 </html>

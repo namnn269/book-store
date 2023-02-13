@@ -18,7 +18,7 @@ import com.nam.service.IProfileService;
 import com.nam.service.IUserService;
 
 @Service
-@PropertySource(value = "messages.properties", encoding = "utf-8")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 public class ProfileServiceImpl implements IProfileService {
 
 	@Autowired

@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.nam.dto.ProfileUserDto;
-import com.nam.dto.PurchasedOrderDetailDto;
+import com.nam.dto.OrderDetailDto;
 import com.nam.entity.ProfileUser;
 import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.ValidFormException;
@@ -36,7 +36,7 @@ public class AccountController {
 	@GetMapping(value = "/my-account")
 	public ModelAndView showAccount(@ModelAttribute("message") String message, @ModelAttribute("error") String error) {
 		ModelAndView mav = new ModelAndView("view/user/my-account");
-		List<PurchasedOrderDetailDto> purchasedBooks=orderDetailService.getListPurchasedOrderDetailDtos();
+		List<OrderDetailDto> purchasedBooks = orderDetailService.getListPurchasedOrderDetailDtos();
 		ProfileUserDto profileUserDto = new ProfileUserDto();
 		try {
 			profileUserDto = profileService.getProfileDto();

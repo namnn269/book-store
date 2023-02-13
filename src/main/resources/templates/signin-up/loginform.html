@@ -71,14 +71,11 @@
                       </div>
                       <div class="form-check">
                         <input
-                          type="checkbox"
+                          type="hidden"
                           class="form-check-input"
                           id="exampleCheck1"
                           name="remember-me"
                         />
-                        <label class="form-check-label" for="exampleCheck1"
-                          >Remember me</label
-                        >
                       </div>
                       <div th:if="${param.error}" th:class="error-acount">
                         <p th:class="alert-danger ">

@@ -16,7 +16,7 @@ import com.nam.dto.EmailDto;
 import com.nam.service.IEmailService;
 
 @Service
-@PropertySource(value = "messages.properties", encoding = "utf-8")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 public class EmailServiceImpl implements IEmailService {
 
 	@Autowired

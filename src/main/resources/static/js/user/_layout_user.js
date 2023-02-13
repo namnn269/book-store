@@ -1,3 +1,6 @@
+//const domain = "/bookstore";
+const domain = "";
+
 $(document).ready(function () {
   // khi hover cart
   $(".top-cart-info").hover(function () {
@@ -9,7 +12,7 @@ $(document).ready(function () {
 function cartHoverhAjax() {
   $.ajax({
     type: "get",
-    url: "/cart/hover-cart-ajax",
+    url: domain + "/cart/hover-cart-ajax",
     success: function (value) {
       $(".scroller").empty();
       $(".scroller").append(value);

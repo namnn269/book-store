@@ -11,9 +11,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PurchasedOrderDetailDto {
+public class OrderDetailDto {
 	
 	private Long id;
+	
+	private Long bookId;
 
 	private String bookTitle;
 	
@@ -21,7 +23,7 @@ public class PurchasedOrderDetailDto {
 	
 	private String imgLink;
 	
-	private double price;
+	private String price;
 	
 	private Long quantity;
 	

@@ -8,9 +8,7 @@
   <body>
     <div layout:fragment="content">
       <div class="container">
-        <!-- BEGIN SIDEBAR & CONTENT -->
         <div class="row margin-bottom-40">
-          <!-- BEGIN CONTENT -->
           <div class="col-md-12 col-sm-12 main-content">
             <div class="row list-view-sorting clearfix">
               <h1>THÔNG TIN KHÁCH HÀNG</h1>
@@ -58,79 +56,23 @@
                 <hr />
 
                 <h3>My Orders History</h3>
-                <table th:unless="${purchased.isEmpty}">
-                  <thead>
-                    <tr style="height: 30px; font-size: 16px">
-                      <th class="goods-page-image" style="width: 15%">
-                        Hình ảnh
-                      </th>
-                      <th class="goods-page-description" style="width: 20%">
-                        Tên sách
-                      </th>
-                      <th class="goods-page-ref-no" style="width: 20%">
-                        Tác giả
-                      </th>
-                      <th class="goods-page-quantity" style="width: 15%">
-                        Số lượng
-                      </th>
-                      <th class="goods-page-price" style="width: 20%">Giá</th>
-                      <th class="goods-page-price" style="width: 20%">
-                        Thời gian
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <th:block th:each="book: ${purchased}">
-                      <tr>
-                        <td class="goods-page-image">
-                          <a th:href="@{'/trang-chu/book-detail/'+${book.id}}"
-                            ><img
-                              th:src="@{${book.imgLink}}"
-                              alt="${book.bookTitle}"
-                          /></a>
-                        </td>
-                        <td class="goods-page-ref-no" style="font-size: 16px">
-                          [[${book.bookTitle}]]
-                        </td>
-                        <td class="goods-page-ref-no">
-                          <th:block th:each="author : ${book.authors}">
-                            <div style="text-align: left; font-size: 15px">
-                              -- [[${author}]]
-                            </div>
-                          </th:block>
-                        </td>
-                        <td class="goods-page-quantity">
-                          <div
-                            class="col-lg-12 col-md-12 col-sm-12 d-flex"
-                            style="font-weight: bold; font-size: 16px"
-                          >
-                            [[${book.quantity}]]
-                          </div>
-                        </td>
-                        <td class="goods-page-price">
-                          <strong>[[${book.price}]]<span>đ</span></strong>
-                        </td>
-                        <td class="goods-page-timesd">
-                          <strong>[[${book.date}]]</strong>
-                        </td>
-                      </tr>
-                    </th:block>
-                  </tbody>
-                </table>
+
+                <!-- //////////////////////////////////////////////////////////////////////////////// -->
+                <a href="/orders/my-orders">
+                  <button class="btn btn-success">My orders</button>
+                </a>
+
+                <!-- //////////////////////////////////////////////////////////////////////////////// -->
+
                 <div th:if="${purchased.isEmpty}" class="alert alert-warning">
                   Chưa có đơn hàng nào
                 </div>
               </div>
             </div>
           </div>
-          <!-- BEGIN PRODUCT LIST -->
           <div class="row product-list" id="product-list"></div>
-
-          <!-- END PRODUCT LIST -->
         </div>
-        <!-- END CONTENT -->
       </div>
-      <!-- END SIDEBAR & CONTENT -->
     </div>
 
     <th:block layout:fragment="script">
@@ -139,19 +81,37 @@
           font-size: 14px;
           margin-left: 10px;
         }
-
-        .category {
-          border: none;
-          background-color: white;
-        }
-
         .info-account li {
           font-size: 16px;
           margin-top: 5px;
           list-style: none;
         }
+        .action-button {
+          background-color: transparent;
+          border: none;
+        }
+        .action-button i {
+          font-size: 24px;
+        }
+        .money {
+          color: red;
+        }
+        .total-money {
+          text-align: center;
+          font-size: 18px;
+          font-family: monospace;
+          font-weight: bold;
+        }
+        .border {
+          height: 29px;
+          font-size: 12px;
+          border: solid 1px #7a7a7a !important;
+        }
+        #confirm-btn {
+          height: 36px;
+          width: 60px;
+        }
       </style>
     </th:block>
   </body>
-  <!-- END BODY -->
 </html>

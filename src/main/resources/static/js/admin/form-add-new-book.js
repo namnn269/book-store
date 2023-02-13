@@ -19,16 +19,28 @@ function checkFormNewBook() {
 	let price2 = $("#price2").val();
 	let year = $("#year").val();
 	let quantity = $("#quantity").val();
+	let categoryId = $("#selUser2").val();
+
 	if (
 		isNaN(price) ||
 		isNaN(price2) ||
 		isNaN(year) ||
-		isNaN(quantity) ||
-		Number.parseFloat(price) < 0 ||
-		Number.parseFloat(price2) < 0
+		isNaN(quantity)
+
 	) {
 		$("#message").addClass("alert alert-danger ");
 		$("#message").text("Dữ liệu không hợp lệ");
+		return false;
+	}
+	else if (Number.parseFloat(price) <= 0 ||
+		Number.parseFloat(price2) <= 0) {
+		$("#message").addClass("alert alert-danger ");
+		$("#message").text("Nhập lại giá tiền!");
+		return false;
+	}
+	if (categoryId == 0) {
+		$("#message").addClass("alert alert-danger ");
+		$("#message").text("Chọn thể loại sách!");
 		return false;
 	}
 	return true;

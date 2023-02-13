@@ -30,14 +30,16 @@ import com.nam.entity.User;
 import com.nam.event.RegistrationCompletionEvent;
 import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.ObjectAlreadyExistedException;
+import com.nam.exception_mesage.ObjectCanNotBeDelete;
 import com.nam.exception_mesage.ObjectNotFoundException;
 import com.nam.exception_mesage.ValidFormException;
 import com.nam.repository.IRoleRepository;
 import com.nam.service.IUserService;
+import com.nam.utils.Constants;
 import com.nam.utils.UrlFromUser;
 
 @Controller
-@PropertySource(value = "messages.properties", encoding = "utf-8")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 @RequestMapping(value = "/admin")
 public class AdminUserController {
 
@@ -49,6 +51,8 @@ public class AdminUserController {
 	private IRoleRepository roleRepo;
 	@Autowired
 	private Environment env;
+	
+	private String domain = Constants.DOMAIN;
 
 	/* Trả về trang quản lý người dùng */
 	@GetMapping({"/management-user",""})
@@ -137,6 +141,8 @@ public class AdminUserController {
 			message = userService.delete(id);
 		} catch (ObjectNotFoundException o) {
 			message = new Message(o.getMessage());
+		}  catch (ObjectCanNotBeDelete e) {
+			message = new Message(e.getMessage());
 		}
 		return message.getContent();
 	}
@@ -179,7 +185,7 @@ public class AdminUserController {
 					+ "                    </td>"
 					+ "                    <td>"
 					+ "                      <a"
-					+ "                        href='/admin/update-user/"+userDto.getId()+"'"
+					+ "                        href='"+domain+"/admin/update-user/"+userDto.getId()+"'"
 					+ "                        class='settings'"
 					+ "                        title='Settings'"
 					+ "                        data-toggle='tooltip'"
@@ -199,7 +205,7 @@ public class AdminUserController {
 			return new String[] {html, paginationHtml};
 		}
 		
-		/* Trả về HTML chứa thông tin pagination thể loại */
+		/* Trả về HTML chứa thông tin pagination user */
 		private  String getPaginationString(int pageNo, int pageSize, String searchKey, Long roleId, int status) {
 			Page<User> userPage = userService.getPageable(pageNo, pageSize, searchKey, roleId, status);
 			String html =			"<div class='hint-text'>"

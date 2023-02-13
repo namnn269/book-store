@@ -18,7 +18,7 @@ public class DisplayBookDto {
 
 	private String imgLink;
 
-	private double price;
+	private String price;
 
 	private double entryPrice;
 

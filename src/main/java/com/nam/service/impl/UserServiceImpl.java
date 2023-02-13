@@ -34,6 +34,7 @@ import com.nam.entity.User;
 import com.nam.event.ResetPasswordEvent;
 import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.ObjectAlreadyExistedException;
+import com.nam.exception_mesage.ObjectCanNotBeDelete;
 import com.nam.exception_mesage.ObjectNotFoundException;
 import com.nam.exception_mesage.ValidFormException;
 import com.nam.mapper.IUserMapper;
@@ -46,7 +47,7 @@ import com.nam.utils.FormValidation;
 import com.nam.utils.UrlFromUser;
 
 @Service
-@PropertySource(value = "messages.properties", encoding = "utf-8")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 public class UserServiceImpl implements IUserService {
 
 	@Autowired
@@ -146,6 +147,12 @@ public class UserServiceImpl implements IUserService {
 			throw new ObjectNotFoundException(env.getProperty("message.not.find.user"));
 		
 		User user = delUser.get();
+		
+		boolean canDelete = !user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList())
+				.contains("ADMIN");
+		if (!canDelete) 
+			throw new ObjectCanNotBeDelete(env.getProperty("message.can.not.delete.admin"));
+
 		Collection<Order> orders= user.getOrders();
 		orders.stream().forEach(order -> {
 			order.getOrderDetails()

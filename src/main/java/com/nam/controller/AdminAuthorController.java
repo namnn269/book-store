@@ -22,13 +22,16 @@ import com.nam.entity.Author;
 import com.nam.exception_mesage.Message;
 import com.nam.exception_mesage.ObjectNotFoundException;
 import com.nam.service.IAuthorService;
+import com.nam.utils.Constants;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminAuthorController {
 	@Autowired
 	private IAuthorService authorService;
-	
+
+	private String domain = Constants.DOMAIN;
+
 	/* Hiển thị trang admin thông tin của các tác giả */
 	@GetMapping("/management-author")
 	public String managementAuthor(Model model, @ModelAttribute("message") String message,
@@ -109,7 +112,7 @@ public class AdminAuthorController {
 					+ "                    <td>"+author.getDescription()+"</td>"
 					+ "                    <td>"
 					+ "                      <a"
-					+ "                        href='/admin/update-author/"+author.getId()+"'"
+					+ "                        href='"+domain+"/admin/update-author/"+author.getId()+"'"
 					+ "                        class='settings'"
 					+ "                        title='Settings'"
 					+ "                        data-toggle='tooltip'"

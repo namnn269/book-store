@@ -35,10 +35,11 @@ import com.nam.exception_mesage.ObjectNotFoundException;
 import com.nam.service.IAuthorService;
 import com.nam.service.IBookService;
 import com.nam.service.ICategoryService;
+import com.nam.utils.Constants;
 
 @Controller
 @ControllerAdvice
-@PropertySource(value = "messages.properties", encoding = "utf-8")
+@PropertySource(value = "classpath:messages.properties", encoding = "utf-8")
 @RequestMapping("/admin")
 public class AdminBookController {
 
@@ -56,6 +57,8 @@ public class AdminBookController {
 	
 	@Value("${spring.servlet.multipart.max-file-size}")
 	private String maxSizeFileUpload;
+	
+	private String domain = Constants.DOMAIN;
 	
 	/* Trả về màn hình quản lý sách */
 	@GetMapping(value = "/management-book")
@@ -197,7 +200,7 @@ public class AdminBookController {
 					+ "                  </td>"
 					+ "                  <td>"
 					+ "                    <a"
-					+ "                      href='/admin/update-book/"+book.getId()+"'"
+					+ "                      href='"+domain+"/admin/update-book/"+book.getId()+"'"
 					+ "                      class='settings'"
 					+ "                      title='Settings'"
 					+ "                      data-toggle='tooltip'"

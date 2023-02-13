@@ -35,6 +35,18 @@ public class Order {
 
 	@Column(name = "order_status")
 	private int status;
+	
+	@Column(name = "cancel_by")
+	private int cancelBy = 0;
+	
+	@Column(name = "address")
+	private String address;
+	
+	@Column(name = "phone_number")
+	private String phoneNumbber;
+	
+	@Column(name = "receiver")
+	private String receiver;
 
 	@ManyToOne( fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)

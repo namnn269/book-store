@@ -1,7 +1,10 @@
 package com.nam.mapper.impl;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,26 +29,27 @@ import com.nam.service.IUserService;
 @Component
 public class BookMapper implements IBookMapper {
 	@Autowired
-	private  IUserService userService;
+	private IUserService userService;
 	@Autowired
-	private  IOrderService orderService;
+	private IOrderService orderService;
 	@Autowired
 	private IBookRepository bookRepo;
 	@Autowired
 	private ICategoryRepository categoryRepo;
 	@Autowired
 	private IAuthorRepository authorRepo;
-	
+
 	/* Map từ Book entity thành BookDto để hiển thị lên màn hình trang chủ */
 	@Override
 	public DisplayBookDto fromBookToDisplayBookDto(Book book) {
 		DisplayBookDto bookDto = new DisplayBookDto();
+		NumberFormat format = new DecimalFormat("#,###", new DecimalFormatSymbols(Locale.GERMAN));
 		bookDto.setId(book.getId());
 		bookDto.setAmountInStock(book.getAmountInStock());
 		bookDto.setBookTitle(book.getBookTitle());
 		bookDto.setCategory(book.getCategory().getCategoryTitle());
 		bookDto.setDescription(book.getDescription());
-		bookDto.setPrice(book.getPrice());
+		bookDto.setPrice(format.format(book.getPrice()));
 		bookDto.setEntryPrice(book.getEntryPrice());
 		bookDto.setImgLink(book.getImgLink());
 		bookDto.setPublishingYear(book.getPublishingYear());
@@ -61,7 +65,7 @@ public class BookMapper implements IBookMapper {
 				bookDto.setAmountInCart(
 						order.getOrderDetails()
 						.stream()
-						.filter(x -> {return Objects.equals(x.getBook().getId(), book.getId());})
+						.filter(x -> x.getBook().getId() == book.getId())
 						.findFirst()
 						.get()
 						.getAmount());
@@ -70,7 +74,7 @@ public class BookMapper implements IBookMapper {
 		}
 		return bookDto;
 	}
-	
+
 	/* Map từ book trong form đăng ký thành Book entity */
 	@Override
 	public Book fromAdminBookDtoToBook(AdminBookDto bookDto) {
@@ -89,21 +93,20 @@ public class BookMapper implements IBookMapper {
 		book.setPrice(bookDto.getPrice());
 		book.setPublishingYear(bookDto.getPublishingYear());
 
-		Collection<Author> authors=bookDto.getAuthors_id().stream()
-								.map(x-> authorRepo.findById(x).get())
-								.collect(Collectors.toList());
-		
-		Category category=categoryRepo.findById(bookDto.getCategory_id()).get();
-		
+		Collection<Author> authors = bookDto.getAuthors_id().stream().map(x -> authorRepo.findById(x).get())
+				.collect(Collectors.toList());
+
+		Category category = categoryRepo.findById(bookDto.getCategory_id()).get();
+
 		book.setAuthors(authors);
 		book.setCategory(category);
 		return book;
 	}
-	
+
 	/* Map từ book entity thành BookDTO để hiển thị lên trang admin */
 	@Override
 	public AdminBookDto fromBookToAdminDtoBook(Book book) {
-		AdminBookDto bookDto= new AdminBookDto();
+		AdminBookDto bookDto = new AdminBookDto();
 		bookDto.setId(book.getId());
 		bookDto.setAmountInStock(book.getAmountInStock());
 		bookDto.setBookTitle(book.getBookTitle());
@@ -113,17 +116,8 @@ public class BookMapper implements IBookMapper {
 		bookDto.setEntryPrice(book.getEntryPrice());
 		bookDto.setImgLink(book.getImgLink());
 		bookDto.setPublishingYear(book.getPublishingYear());
-		bookDto.setAuthors_id(book.getAuthors().stream()
-						.map(Author::getId).collect(Collectors.toList()));
+		bookDto.setAuthors_id(book.getAuthors().stream().map(Author::getId).collect(Collectors.toList()));
 		return bookDto;
 	}
 
 }
-
-
-
-
-
-
-
-
