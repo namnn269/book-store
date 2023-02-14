@@ -1,0 +1,23 @@
+database railway BOOKSTORE
+
+mysql://root:zbqCAMrloNdxoIsuyG4C@containers-us-west-196.railway.app:5759/railway
+
+PROD_DB_HOST containers-us-west-196.railway.app
+PROD_DB_PORT 5759
+PROD_DB_NAME railway
+PROD_DB_USERNAME root
+PROD_DB_PASSWORD zbqCAMrloNdxoIsuyG4C
+
+
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+
+database heroku MONEY MANAGEMENT
+
+mysql://bd71c3d331aaa6:22d91438@us-cdbr-east-06.cleardb.net/heroku_1c11b7a399fdae5?reconnect=true
+
+PROD_DB_HOST bd71c3d331aaa6
+PROD_DB_PORT 22d91438@us-cdbr-east-06.cleardb.net
+PROD_DB_NAME heroku_1c11b7a399fdae5
+PROD_DB_USERNAME bd71c3d331aaa6
+PROD_DB_PASSWORD 22d91438
