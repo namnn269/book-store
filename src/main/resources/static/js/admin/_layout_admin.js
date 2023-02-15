@@ -19,6 +19,6 @@ $(document).ready(function () {
     $("#admin-search-input").val("");
     let pageNo =
       Number.parseInt($(".pagination").find(".page-item.active").text()) - 1;
-    callAjax(pageNo);
+    callAjax(pageNo || 0);
   });
 });
