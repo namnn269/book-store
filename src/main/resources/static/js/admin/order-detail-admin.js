@@ -1,4 +1,18 @@
 $(document).ready(function () {
+  $(".nav-sidebar").removeClass("active");
+  switch ($(".status-admin").val()) {
+    case "1":
+      $(".order-nav-sidebar").addClass("active");
+      break;
+    case "2":
+      $(".confirmed-order-nav-sidebar").addClass("active");
+      break;
+    case "3":
+      $(".canceled-order-nav-sidebar").addClass("active");
+      break;
+    default:
+      break;
+  }
   $("body").on("click", ".confirm-btn", function () {
     if (confirm("Xác nhận đơn hàng")) {
       callConfirmOrderAjax(Number.parseInt($(this).val()));

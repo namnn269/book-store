@@ -20,6 +20,11 @@
                     <div th:if="${order}">
                       <h2>
                         Trạng thái:
+                        <input
+                          type="hidden"
+                          class="status-admin"
+                          th:value="${order.status}"
+                        />
                         <span th:switch="${order.status}">
                           <span th:case="'1'">Chờ xác nhận</span>
                           <span th:case="'2'">Đã xác nhận</span>
